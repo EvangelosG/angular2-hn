@@ -7,6 +7,7 @@ import { Feed } from './components/Feed/Feed';
 import { ItemDetails } from './components/ItemDetails/ItemDetails';
 import { UserProfile } from './components/UserProfile/UserProfile';
 import './App.scss';
+import './components/Settings/Settings.scss';
 
 declare let ga: Function;
 

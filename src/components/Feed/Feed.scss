@@ -2,7 +2,7 @@
 @import "../../app/shared/scss/theme_variables";
 
 .feed-wrapper {
-    a {
+    > .main-content > .nav a {
         text-decoration: none;
         font-weight: bold;
 
