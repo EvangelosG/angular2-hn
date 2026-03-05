@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
 import { Header } from './components/Header/Header';
@@ -13,7 +13,15 @@ declare let ga: Function;
 
 function GATracker() {
     const location = useLocation();
+    const isFirstRender = useRef(true);
     useEffect(() => {
+        // Skip the initial render to match Angular's NavigationEnd behavior.
+        // Angular only tracked urlAfterRedirects on NavigationEnd events,
+        // so the initial URL (e.g. "/") before a redirect was never sent.
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         if (typeof ga !== 'undefined') {
             ga('set', 'page', location.pathname);
             ga('send', 'pageview');
