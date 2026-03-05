@@ -107,22 +107,22 @@
     }
 
     a {
-      color: hsla(0,0%,100%,.9);
+      color: hsla(0,0%,100%,.9) !important;
       text-decoration: none;
       margin: 0 5px;
       letter-spacing: 1.8px;
 
       &:hover {
-        color: #fff;
+        color: #fff !important;
       }
 
       &:visited {
-        color: hsla(0,0%,100%,.9);
+        color: hsla(0,0%,100%,.9) !important;
       }
     }
 
     .active {
-      color: #fff;
+      color: #fff !important;
     }
   }
 
