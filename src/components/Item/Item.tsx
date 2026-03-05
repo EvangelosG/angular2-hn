@@ -13,7 +13,7 @@ export function Item({ item }: ItemProps) {
     const hasUrl = item.url && item.url.indexOf('http') === 0;
 
     return (
-        <div style={{ marginBottom: settings.listSpacing + 'px' }}>
+        <div className="item-wrapper" style={{ marginBottom: settings.listSpacing + 'px' }}>
             {hasUrl ? (
                 <p>
                     <a

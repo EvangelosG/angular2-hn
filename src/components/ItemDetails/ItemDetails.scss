@@ -1,6 +1,8 @@
 @import "../../scss/media";
 @import "../../scss/theme_variables";
 
+.item-details-wrapper {
+
 .main-content {
   position: relative;
   width: 100%;
@@ -149,3 +151,5 @@ ul {
 li {
   display: list-item;
 }
+
+} // .item-details-wrapper

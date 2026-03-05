@@ -1,6 +1,8 @@
 @import "../../scss/media";
 @import "../../scss/theme_variables";
 
+.feed-wrapper {
+
 a {
   text-decoration: none;
   font-weight: bold;
@@ -106,3 +108,5 @@ ol {
     padding: 60px 15px 25px 15px;
   }
 }
+
+} // .feed-wrapper

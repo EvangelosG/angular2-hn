@@ -33,6 +33,7 @@ export function Feed({ feedType }: FeedProps) {
     }, [feedType, pageNum]);
 
     return (
+        <div className="feed-wrapper">
         <div className="main-content">
             {!items && !errorMessage && <Loader />}
             {!items && errorMessage !== '' && <ErrorMessage message={errorMessage} />}
@@ -72,6 +73,7 @@ export function Feed({ feedType }: FeedProps) {
                     </div>
                 </div>
             )}
+        </div>
         </div>
     );
 }

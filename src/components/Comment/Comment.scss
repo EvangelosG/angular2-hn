@@ -1,6 +1,8 @@
 @import "../../scss/media";
 @import "../../scss/theme_variables";
 
+.comment-wrapper {
+
 a {
   font-weight: bold;
   text-decoration: none;
@@ -81,3 +83,5 @@ a {
   padding: 0;
   list-style-type: none;
 }
+
+} // .comment-wrapper

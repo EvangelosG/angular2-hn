@@ -1,6 +1,8 @@
 @import "../../scss/media";
 @import "../../scss/theme_variables";
 
+.item-wrapper {
+
 p {
     margin: 2px 0;
 
@@ -66,3 +68,5 @@ p {
   .item-details {
     padding: 10px;
   }
+
+} // .item-wrapper

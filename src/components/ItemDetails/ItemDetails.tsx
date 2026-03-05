@@ -37,6 +37,7 @@ export function ItemDetails() {
     const hasUrl = item ? item.url && item.url.indexOf('http') === 0 : false;
 
     return (
+        <div className="item-details-wrapper">
         <div className="main-content">
             {!item && !errorMessage && <Loader />}
             {!item && errorMessage !== '' && <ErrorMessage message={errorMessage} />}
@@ -132,6 +133,7 @@ export function ItemDetails() {
                     </ul>
                 </div>
             )}
+        </div>
         </div>
     );
 }
