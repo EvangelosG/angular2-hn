@@ -18,17 +18,23 @@ export function ItemDetails() {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
+        let cancelled = false;
         setItem(null);
         setErrorMessage('');
         const itemID = Number(id);
         fetchItemContent(itemID)
             .then((data) => {
-                setItem(data);
+                if (!cancelled) {
+                    setItem(data);
+                }
             })
             .catch(() => {
-                setErrorMessage('Could not load item comments.');
+                if (!cancelled) {
+                    setErrorMessage('Could not load item comments.');
+                }
             });
         window.scrollTo(0, 0);
+        return () => { cancelled = true; };
     }, [id]);
 
     const goBack = () => {
