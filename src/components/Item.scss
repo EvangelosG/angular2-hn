@@ -1,19 +1,21 @@
 @import "../scss/media";
 @import "../scss/theme_variables";
 
-p {
+.item-wrapper {
+  p {
     margin: 2px 0;
 
     @media #{$mobile-only} {
       margin-bottom: 5px;
       margin-top: 0;
-   }
+    }
   }
 
   a {
     cursor: pointer;
     text-decoration: none;
   }
+}
 
   .title {
     font-size: 16px;

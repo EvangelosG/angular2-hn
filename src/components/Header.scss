@@ -51,7 +51,7 @@
   }
 }
 
-h1 {
+#header h1 {
   font-weight: normal;
   display: inline-block;
   vertical-align:middle;
@@ -97,7 +97,7 @@ h1 {
   }
 }
 
-.header-nav {
+#header .header-nav {
   display: inline-block;
   margin-left: 20px;
 
@@ -113,6 +113,10 @@ h1 {
 
     &:hover {
       color: #fff;
+    }
+
+    &:visited {
+      color: hsla(0,0%,100%,.9);
     }
   }
 

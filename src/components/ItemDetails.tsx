@@ -37,7 +37,7 @@ const ItemDetails: React.FC = () => {
   const hasUrl = item ? item.url && item.url.indexOf('http') === 0 : false;
 
   return (
-    <div className="main-content">
+    <div className="item-details-wrapper main-content">
       {!item && !errorMessage && <Loader />}
       {!item && errorMessage !== '' && <ErrorMessage message={errorMessage} />}
 
