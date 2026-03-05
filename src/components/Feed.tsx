@@ -33,7 +33,7 @@ const Feed: React.FC<FeedProps> = ({ feedType }) => {
   const listStart = (pageNum - 1) * 30 + 1;
 
   return (
-    <div className="main-content">
+    <div className="feed-wrapper main-content">
       {!items && !errorMessage && <Loader />}
       {!items && errorMessage !== '' && <ErrorMessage message={errorMessage} />}
 

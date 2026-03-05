@@ -35,18 +35,24 @@
   margin-bottom: 15px;
 }
 
-p {
-  margin: 2px 0;
-}
+.item-details-wrapper {
+  p {
+    margin: 2px 0;
+  }
 
-.subject {
-  word-wrap: break-word;
-  margin-top: 20px;
-}
+  a {
+    cursor: pointer;
+    text-decoration: none;
+  }
 
-a {
-  cursor: pointer;
-  text-decoration: none;
+  ul {
+    list-style-type: none;
+    padding: 10px 0;
+  }
+
+  li {
+    display: list-item;
+  }
 }
 
 @media #{$mobile-only} {
@@ -141,11 +147,7 @@ a {
   }
 }
 
-ul {
-  list-style-type: none;
-  padding: 10px 0;
-}
-
-li {
-  display: list-item;
+.subject {
+  word-wrap: break-word;
+  margin-top: 20px;
 }
