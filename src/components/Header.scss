@@ -97,7 +97,7 @@
   }
 }
 
-.header-nav {
+#header .header-nav {
   display: inline-block;
   margin-left: 20px;
 
@@ -113,6 +113,10 @@
 
     &:hover {
       color: #fff;
+    }
+
+    &:visited {
+      color: hsla(0,0%,100%,.9);
     }
   }
 
