@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Comment as CommentType } from '../../models';
+import { sanitizeHtml } from '../../utils/sanitize';
 import './Comment.scss';
 
 interface CommentProps {
@@ -31,7 +32,7 @@ export function Comment({ comment }: CommentProps) {
             </div>
             <div className="comment-tree">
                 <div hidden={collapse}>
-                    <p className="comment-text" dangerouslySetInnerHTML={{ __html: comment.content }} />
+                    <p className="comment-text" dangerouslySetInnerHTML={{ __html: sanitizeHtml(comment.content) }} />
                     <ul className="subtree">
                         {comment.comments &&
                             comment.comments.map((subComment) => (
