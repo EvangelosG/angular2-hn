@@ -15,7 +15,7 @@ const defaultSettings: Settings = {
   openLinkInNewTab: localStorage.getItem('openLinkInNewTab')
     ? JSON.parse(localStorage.getItem('openLinkInNewTab')!)
     : false,
-  theme: 'default',
+  theme: localStorage.getItem('theme') || 'default',
   titleFontSize: localStorage.getItem('titleFontSize') || '16',
   listSpacing: localStorage.getItem('listSpacing') || '0',
 };
