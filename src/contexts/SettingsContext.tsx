@@ -37,9 +37,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings>(getInitialSettings);
 
   const handleColorSchemeChange = useCallback((event: MediaQueryListEvent) => {
-    const theme = event.matches ? 'night' : 'default';
-    setSettings(prev => ({ ...prev, theme }));
-    localStorage.setItem('theme', theme);
+    const savedTheme = localStorage.getItem('theme');
+    if (!savedTheme) {
+      const theme = event.matches ? 'night' : 'default';
+      setSettings(prev => ({ ...prev, theme }));
+    }
   }, []);
 
   useEffect(() => {
