@@ -41,12 +41,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const darkColorSchemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
         const handler = (event: MediaQueryListEvent) => {
-            const savedTheme = localStorage.getItem('theme');
-            if (!savedTheme) {
-                const theme = event.matches ? 'night' : 'default';
-                setSettings((prev) => ({ ...prev, theme }));
-                localStorage.setItem('theme', theme);
-            }
+            const theme = event.matches ? 'night' : 'default';
+            setSettings((prev) => ({ ...prev, theme }));
+            localStorage.setItem('theme', theme);
         };
         darkColorSchemeMedia.addEventListener('change', handler);
         return () => darkColorSchemeMedia.removeEventListener('change', handler);
