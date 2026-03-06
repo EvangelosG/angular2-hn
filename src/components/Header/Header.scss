@@ -93,19 +93,20 @@
       margin-left: 60px;
     }
 
-    a {
-      color: hsla(0,0%,100%,.9);
+    a,
+    a:visited {
+      color: hsla(0,0%,100%,.9) !important;
       text-decoration: none;
       margin: 0 5px;
       letter-spacing: 1.8px;
 
       &:hover {
-        color: #fff;
+        color: #fff !important;
       }
     }
 
     .active {
-      color: #fff;
+      color: #fff !important;
     }
   }
 
