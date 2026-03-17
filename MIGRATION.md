@@ -16,6 +16,7 @@ This document provides a comprehensive summary of the full migration of **Angula
 - [Pipes to Utility Functions](#pipes-to-utility-functions)
 - [Styles and Theming](#styles-and-theming)
 - [Static Assets and PWA](#static-assets-and-pwa)
+- [Security — HTML Sanitization](#security--html-sanitization)
 - [Angular to React Pattern Mappings](#angular-to-react-pattern-mappings)
 - [Key Decisions and Pitfalls](#key-decisions-and-pitfalls)
 - [Verification](#verification)
@@ -36,6 +37,7 @@ The original application was an Angular 2+ Hacker News client using Angular CLI,
 - Google Analytics integration
 - Lazy-loaded routes
 - Responsive mobile/desktop layouts
+- HTML sanitization via DOMPurify for all user-generated content
 
 The original Angular source code was preserved in the `angular-legacy/` directory for reference. The active codebase is a pure React application with **zero Angular dependencies**.
 
@@ -53,6 +55,7 @@ The original Angular source code was preserved in the `angular-legacy/` director
 | **HTTP / Data**     | RxJS Observables + `unfetch`              | `async/await` + native `fetch`             |
 | **Styling**         | SCSS with `ViewEncapsulation`             | SCSS with wrapper-class scoping            |
 | **PWA**             | `@angular/service-worker` (`ngsw`)        | `vite-plugin-pwa` (Workbox)                |
+| **HTML Sanitization** | None (raw `[innerHTML]` binding)        | DOMPurify via `sanitizeHtml()` utility     |
 | **Dev Server Port** | 4200 (Angular CLI default)                | 5174+ (Vite)                               |
 
 ### Dependencies (package.json)
@@ -62,8 +65,8 @@ The original Angular source code was preserved in the `angular-legacy/` director
 - `rxjs`, `zone.js`, `unfetch`
 
 **After** (React):
-- `react`, `react-dom`, `react-router-dom`
-- Dev: `@vitejs/plugin-react`, `sass`, `typescript`, `vite`, `vite-plugin-pwa`
+- `react`, `react-dom`, `react-router-dom`, `dompurify`
+- Dev: `@types/dompurify`, `@vitejs/plugin-react`, `sass`, `typescript`, `vite`, `vite-plugin-pwa`
 
 ---
 
@@ -114,7 +117,8 @@ angular2-hn/
 │   │   ├── _theme_variables.scss
 │   │   └── _media.scss
 │   ├── utils/
-│   │   └── formatCommentCount.ts
+│   │   ├── formatCommentCount.ts
+│   │   └── sanitize.ts
 │   ├── App.tsx
 │   ├── App.scss
 │   └── main.tsx
@@ -189,15 +193,15 @@ All 11 Angular components were migrated to React functional components with hook
 
 ### 7. ItemDetails
 - **Angular**: `ItemDetailsComponent` — lazy-loaded module, subscribes to route params, fetches item + poll data, renders HTML content with `[innerHTML]`, recursive `<app-comment>` components
-- **React**: `ItemDetails.tsx` — `React.lazy` loaded, `useParams()` + `useNavigate()`, `useEffect` for fetching, `dangerouslySetInnerHTML` for HTML content, recursive `<Comment>` components
+- **React**: `ItemDetails.tsx` — `React.lazy` loaded, `useParams()` + `useNavigate()`, `useEffect` for fetching, `dangerouslySetInnerHTML` with DOMPurify sanitization for item content and poll content, recursive `<Comment>` components
 
 ### 8. Comment
 - **Angular**: `CommentComponent` — recursive template with `*ngFor`, collapse toggle, `[innerHTML]` for content, deleted comment handling
-- **React**: `Comment.tsx` — recursive JSX with `.map()`, `useState` for collapse, `dangerouslySetInnerHTML`, deleted comment handling
+- **React**: `Comment.tsx` — recursive JSX with `.map()`, `useState` for collapse, `dangerouslySetInnerHTML` with DOMPurify sanitization for comment content, deleted comment handling
 
 ### 9. UserProfile
 - **Angular**: `UserComponent` — lazy-loaded, fetches user data, displays karma/created/about with `[innerHTML]`
-- **React**: `UserProfile.tsx` — `React.lazy` loaded, `useParams()` + `useNavigate(-1)` for back, `dangerouslySetInnerHTML` for about section
+- **React**: `UserProfile.tsx` — `React.lazy` loaded, `useParams()` + `useNavigate(-1)` for back, `dangerouslySetInnerHTML` with DOMPurify sanitization for user about section
 
 ### 10. Loader
 - **Angular**: `LoaderComponent` — simple loading spinner template
@@ -260,6 +264,7 @@ Angular pipes have no direct React equivalent. They were converted to plain util
 | Angular Pipe                       | React Utility                              | Logic                                   |
 | ---------------------------------- | ------------------------------------------ | --------------------------------------- |
 | `CommentPipe` (`comment.pipe.ts`) | `formatCommentCount()` (`utils/formatCommentCount.ts`) | `0 → "discuss"`, `1 → "1 comment"`, `n → "n comments"` |
+| *(none — raw innerHTML)* | `sanitizeHtml()` (`utils/sanitize.ts`) | Wraps `DOMPurify.sanitize()` — used on all `dangerouslySetInnerHTML` calls |
 
 ---
 
@@ -346,6 +351,41 @@ VitePWA({
 
 ---
 
+## Security — HTML Sanitization
+
+The HN API returns user-generated HTML in comment bodies, item content, poll content, and user "about" fields. The Angular app injected this raw HTML via `[innerHTML]` without sanitization. The React migration adds **DOMPurify** to sanitize all HTML before rendering, closing a potential XSS vector.
+
+### Implementation
+
+A shared utility wraps DOMPurify:
+
+```typescript
+// src/utils/sanitize.ts
+import DOMPurify from 'dompurify';
+
+export function sanitizeHtml(dirty: string): string {
+  return DOMPurify.sanitize(dirty);
+}
+```
+
+### Where It's Applied
+
+| Component          | Field Sanitized                          | Usage                                                     |
+| ------------------ | ---------------------------------------- | --------------------------------------------------------- |
+| `Comment.tsx`      | `comment.content`                        | Comment body HTML                                         |
+| `ItemDetails.tsx`  | `item.content`                           | Story/post body HTML                                      |
+| `ItemDetails.tsx`  | `pollResult.content`                     | Poll option HTML                                          |
+| `UserProfile.tsx`  | `user.about`                             | User bio HTML                                             |
+
+Every `dangerouslySetInnerHTML` call in the codebase now passes through `sanitizeHtml()`. This is a **security improvement over the Angular original**, which injected raw API HTML without any sanitization.
+
+### Dependencies Added
+
+- `dompurify` (^3.3.1) — runtime dependency
+- `@types/dompurify` (^3.0.5) — TypeScript type definitions (dev)
+
+---
+
 ## Angular to React Pattern Mappings
 
 This table documents every Angular-specific pattern and its React equivalent used in this migration.
@@ -361,7 +401,7 @@ This table documents every Angular-specific pattern and its React equivalent use
 | `ngOnInit` / `ngOnChanges`               | `useEffect` hook                                   |
 | `*ngIf="condition"`                      | `{condition && <jsx />}` or ternary                |
 | `*ngFor="let item of items"`             | `{items.map(item => <jsx />)}`                     |
-| `[innerHTML]="html"`                     | `dangerouslySetInnerHTML={{ __html: html }}`       |
+| `[innerHTML]="html"`                     | `dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }}` — **always sanitize with DOMPurify** |
 | `routerLink="/path"`                     | `<Link to="/path">` / `<NavLink to="/path">`      |
 | `routerLinkActive="active"`              | `<NavLink>` automatic `active` class               |
 | `ActivatedRoute.params`                  | `useParams()` hook                                 |
@@ -397,6 +437,14 @@ This table documents every Angular-specific pattern and its React equivalent use
 ### 5. Service Worker Choice
 **Decision**: Used `vite-plugin-pwa` with Workbox instead of a custom service worker.
 **Reason**: The Angular `ngsw` config was purely a caching layer with no custom logic. Workbox's `generateSW` mode provides the same functionality with less configuration and better Vite integration.
+
+### 6. HTML Sanitization
+**Decision**: Added DOMPurify sanitization for all `dangerouslySetInnerHTML` usage, even though the Angular original did not sanitize `[innerHTML]`.
+**Reason**: React's `dangerouslySetInnerHTML` makes the XSS risk explicit by name. Since the HN API returns user-generated HTML (comments, bios, post content), sanitizing with DOMPurify is a best practice that prevents script injection. A shared `sanitizeHtml()` utility centralizes this in one place.
+
+### 7. Page Title Update
+**Change**: Updated `<title>` in `index.html` from `"Angular 2 HN"` to `"React 2 HN"` to reflect the new framework.
+**Note**: Some meta tags (Open Graph, Twitter cards) still reference Angular in their descriptions. These are cosmetic and can be updated if the app is redeployed.
 
 ---
 
@@ -460,6 +508,7 @@ The following checks were performed to confirm a complete and accurate migration
 | `src/context/SettingsContext.tsx`      | Settings state management via Context      |
 | `src/services/api.ts`                 | API fetch functions                        |
 | `src/utils/formatCommentCount.ts`     | Comment count formatting utility           |
+| `src/utils/sanitize.ts`               | DOMPurify HTML sanitization wrapper        |
 | `src/models/Story.ts`                 | Story interface                            |
 | `src/models/Comment.ts`              | Comment interface                          |
 | `src/models/User.ts`                 | User interface                             |

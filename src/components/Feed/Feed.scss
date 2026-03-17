@@ -2,7 +2,7 @@
 @import "../../styles/theme_variables";
 
 .feed-wrapper {
-  a {
+  .nav a, .job-header a {
     text-decoration: none;
     font-weight: bold;
 

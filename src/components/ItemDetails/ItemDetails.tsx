@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { fetchItemContent } from '../../services/api';
+import { sanitizeHtml } from '../../utils/sanitize';
 import { Story } from '../../models/Story';
 import { useSettings } from '../../context/SettingsContext';
 import { formatCommentCount } from '../../utils/formatCommentCount';
@@ -101,14 +102,14 @@ export default function ItemDetails() {
             <div className="pollResults">
               {item.poll.map((pollResult, index) => (
                 <div key={index} className="pollContent">
-                  <div dangerouslySetInnerHTML={{ __html: pollResult.content }}></div>
+                  <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(pollResult.content) }}></div>
                   <div className="subtext">{pollResult.points} points</div>
                   <div className="pollBar" style={{ width: (pollResult.points / item.poll_votes_count * 100) + '%' }}></div>
                 </div>
               ))}
             </div>
           )}
-          <p className="subject" dangerouslySetInnerHTML={{ __html: item.content }}></p>
+          <p className="subject" dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.content) }}></p>
           <ul className="comment-list">
             {item.comments && item.comments.map(comment => (
               <li key={comment.id}>
