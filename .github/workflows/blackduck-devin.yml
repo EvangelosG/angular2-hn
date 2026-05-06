@@ -54,14 +54,14 @@ jobs:
           node-version: '12'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       # ── Black Duck Scan ──────────────────────────────────────────────
       # Uses Synopsys Detect in RAPID mode for fast policy-check scanning.
       # RAPID mode doesn't require a full persistent scan — it returns
       # vulnerability data as JSON without creating a project in Black Duck.
       - name: Run Black Duck Rapid Scan
-        if: env.MOCK_MODE != 'true'
+        if: ${{ env.MOCK_MODE != 'true' && secrets.BLACKDUCK_URL != '' && secrets.BLACKDUCK_API_TOKEN != '' }}
         uses: synopsys-sig/detect-action@v0.3.5
         with:
           blackduck-url: ${{ secrets.BLACKDUCK_URL }}
@@ -69,6 +69,13 @@ jobs:
           detect-version: latest
           scan-mode: RAPID
         continue-on-error: true # Don't fail the workflow; we handle results below
+
+      - name: Skip notice (no Black Duck credentials)
+        if: ${{ env.MOCK_MODE != 'true' && (secrets.BLACKDUCK_URL == '' || secrets.BLACKDUCK_API_TOKEN == '') }}
+        run: |
+          echo "::warning::Black Duck credentials not configured. Skipping scan."
+          echo "To enable scanning, add BLACKDUCK_URL and BLACKDUCK_API_TOKEN as repository secrets."
+          echo "You can still test the pipeline using mock mode (workflow_dispatch with mock_mode=true)."
 
       # ── Mock Mode ────────────────────────────────────────────────────
       # Generates realistic mock vulnerability data for testing the
@@ -105,6 +112,7 @@ jobs:
     steps:
       - name: Download scan results
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: blackduck-results
 
