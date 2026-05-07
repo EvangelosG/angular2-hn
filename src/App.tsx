@@ -1,26 +1,16 @@
-import { useEffect } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import Header from './components/core/Header';
 import Footer from './components/core/Footer';
+import Feed from './components/feeds/Feed';
+import Loader from './components/shared/Loader';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 
-function FeedPlaceholder({ feedType }: { feedType: string }) {
-    const { page } = useParams<{ page: string }>();
-    return <p>[Phase 4 placeholder] Feed: {feedType}, page {page}</p>;
-}
+const ItemDetails = lazy(() => import('./components/item-details/ItemDetails'));
+const User = lazy(() => import('./components/user/User'));
 
-function ItemDetailsPlaceholder() {
-    const { id } = useParams<{ id: string }>();
-    return <p>[Phase 4 placeholder] Item details: {id}</p>;
-}
-
-function UserPlaceholder() {
-    const { id } = useParams<{ id: string }>();
-    return <p>[Phase 4 placeholder] User: {id}</p>;
-}
-
-function NotFoundPlaceholder() {
+function NotFound() {
     return <p>Not found</p>;
 }
 
@@ -40,14 +30,28 @@ function Layout() {
                 <Header />
                 <Routes>
                     <Route path="/" element={<Navigate to="/news/1" replace />} />
-                    <Route path="/news/:page" element={<FeedPlaceholder feedType="news" />} />
-                    <Route path="/newest/:page" element={<FeedPlaceholder feedType="newest" />} />
-                    <Route path="/show/:page" element={<FeedPlaceholder feedType="show" />} />
-                    <Route path="/ask/:page" element={<FeedPlaceholder feedType="ask" />} />
-                    <Route path="/jobs/:page" element={<FeedPlaceholder feedType="jobs" />} />
-                    <Route path="/item/:id" element={<ItemDetailsPlaceholder />} />
-                    <Route path="/user/:id" element={<UserPlaceholder />} />
-                    <Route path="*" element={<NotFoundPlaceholder />} />
+                    <Route path="/news/:page" element={<Feed feedType="news" />} />
+                    <Route path="/newest/:page" element={<Feed feedType="newest" />} />
+                    <Route path="/show/:page" element={<Feed feedType="show" />} />
+                    <Route path="/ask/:page" element={<Feed feedType="ask" />} />
+                    <Route path="/jobs/:page" element={<Feed feedType="jobs" />} />
+                    <Route
+                        path="/item/:id"
+                        element={
+                            <Suspense fallback={<Loader />}>
+                                <ItemDetails />
+                            </Suspense>
+                        }
+                    />
+                    <Route
+                        path="/user/:id"
+                        element={
+                            <Suspense fallback={<Loader />}>
+                                <User />
+                            </Suspense>
+                        }
+                    />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />
             </div>

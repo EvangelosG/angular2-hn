@@ -1,21 +1,29 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import App from './App';
+
+function pendingFetch() {
+    // Returns a promise that never resolves so the Loader stays visible during the test.
+    return new Promise(() => undefined);
+}
 
 describe('App', () => {
     beforeEach(() => {
         localStorage.clear();
         window.history.replaceState({}, '', '/');
+        vi.stubGlobal('fetch', vi.fn(pendingFetch));
     });
 
     afterEach(() => {
         localStorage.clear();
         window.history.replaceState({}, '', '/');
+        vi.unstubAllGlobals();
+        vi.restoreAllMocks();
     });
 
-    it('redirects "/" to "/news/1" and renders the news placeholder', async () => {
+    it('redirects "/" to "/news/1" and renders the Feed loader', async () => {
         window.history.replaceState({}, '', '/');
         render(<App />);
 
@@ -23,7 +31,7 @@ describe('App', () => {
             expect(window.location.pathname).toBe('/news/1');
         });
 
-        expect(screen.getByText(/Phase 4 placeholder.*news.*page 1/i)).toBeInTheDocument();
+        expect(screen.getByText('Loading...')).toBeInTheDocument();
     });
 
     it('renders Header (5 nav links) and the body-cover element', () => {
