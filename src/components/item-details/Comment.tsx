@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import type { Comment as CommentModel } from '../../models';
+import './Comment.scss';
 
 interface CommentProps {
     comment: CommentModel;
@@ -12,7 +13,7 @@ function Comment({ comment }: CommentProps) {
 
     if (comment.deleted) {
         return (
-            <div>
+            <div className="comment">
                 <div className="deleted-meta">
                     <span className="collapse">[deleted]</span> | Comment Deleted
                 </div>
@@ -23,7 +24,7 @@ function Comment({ comment }: CommentProps) {
     const toggleLabel = collapse ? '[+]' : '[-]';
 
     return (
-        <div className={`level-${comment.level ?? 0}`}>
+        <div className={`comment level-${comment.level ?? 0}`}>
             <div className={collapse ? 'meta meta-collapse' : 'meta'}>
                 <button
                     type="button"

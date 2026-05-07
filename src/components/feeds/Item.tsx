@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSettings } from '../../context/SettingsContext';
 import type { Story } from '../../models';
 import { formatCommentCount } from '../../utils/commentFormatter';
+import './Item.scss';
 
 interface ItemProps {
     item: Story;
@@ -19,7 +20,7 @@ function Item({ item }: ItemProps) {
     const titleStyle = { fontSize: `${settings.titleFontSize}px` };
 
     return (
-        <div style={{ marginBottom: `${settings.listSpacing}px` }}>
+        <div className="item" style={{ marginBottom: `${settings.listSpacing}px` }}>
             {externalUrl ? (
                 <p>
                     <a

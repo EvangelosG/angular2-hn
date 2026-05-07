@@ -5,6 +5,7 @@ import { fetchUser } from '../../hooks/useHackerNewsApi';
 import type { User as UserModel } from '../../models';
 import ErrorMessage from '../shared/ErrorMessage';
 import Loader from '../shared/Loader';
+import './User.scss';
 
 function User() {
     const { id } = useParams<{ id: string }>();
@@ -61,28 +62,25 @@ function User() {
     }
 
     return (
-        <div className="profile">
-            <div className="mobile item-header">
-                <p className="title-block">
-                    <button
-                        type="button"
-                        className="back-button"
-                        onClick={goBack}
-                        aria-label="Go back"
-                    />
-                    Profile: {user.id}
-                </p>
-            </div>
-            <div className="main-details">
-                <span className="name">{user.id}</span>
-                <span className="right">{user.karma} ★</span>
-                <p className="age">Created {user.created}</p>
-            </div>
-            {user.about && (
-                <div className="other-details">
-                    <p dangerouslySetInnerHTML={{ __html: user.about }} />
+        <div className="user-profile">
+            <div className="profile">
+                <div className="mobile item-header">
+                    <p className="title-block">
+                        <button type="button" className="back-button" onClick={goBack} aria-label="Go back" />
+                        Profile: {user.id}
+                    </p>
                 </div>
-            )}
+                <div className="main-details">
+                    <span className="name">{user.id}</span>
+                    <span className="right">{user.karma} ★</span>
+                    <p className="age">Created {user.created}</p>
+                </div>
+                {user.about && (
+                    <div className="other-details">
+                        <p dangerouslySetInnerHTML={{ __html: user.about }} />
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

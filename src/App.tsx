@@ -26,7 +26,7 @@ function Layout() {
     return (
         <div className={settings.theme}>
             <div className="body-cover" />
-            <div>
+            <div className="wrapper">
                 <Header />
                 <Routes>
                     <Route path="/" element={<Navigate to="/news/1" replace />} />

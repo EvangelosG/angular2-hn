@@ -6,6 +6,7 @@ import type { Story } from '../../models';
 import ErrorMessage from '../shared/ErrorMessage';
 import Loader from '../shared/Loader';
 import Item from './Item';
+import './Feed.scss';
 
 interface FeedProps {
     feedType: string;
@@ -60,7 +61,7 @@ function Feed({ feedType }: FeedProps) {
 
     if (loading) {
         return (
-            <div className="main-content">
+            <div className="feed-wrapper main-content">
                 <Loader />
             </div>
         );
@@ -68,20 +69,20 @@ function Feed({ feedType }: FeedProps) {
 
     if (errorMessage) {
         return (
-            <div className="main-content">
+            <div className="feed-wrapper main-content">
                 <ErrorMessage message={errorMessage} />
             </div>
         );
     }
 
     if (!items) {
-        return <div className="main-content" />;
+        return <div className="feed-wrapper main-content" />;
     }
 
     const olClassName = feedType !== 'jobs' ? 'list-margin' : undefined;
 
     return (
-        <div className="main-content">
+        <div className="feed-wrapper main-content">
             <div>
                 {feedType === 'jobs' && (
                     <p className="job-header">

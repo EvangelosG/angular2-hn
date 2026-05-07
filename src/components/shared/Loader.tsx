@@ -1,7 +1,9 @@
+import './Loader.scss';
+
 function Loader() {
     return (
-        <div className="loader">
-            <div className="loading-section">Loading...</div>
+        <div className="loading-section">
+            <div className="loader">Loading...</div>
         </div>
     );
 }

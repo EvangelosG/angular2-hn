@@ -8,6 +8,7 @@ import { formatCommentCount } from '../../utils/commentFormatter';
 import ErrorMessage from '../shared/ErrorMessage';
 import Loader from '../shared/Loader';
 import Comment from './Comment';
+import './ItemDetails.scss';
 
 function hasExternalUrl(url: string | undefined): boolean {
     return typeof url === 'string' && url.indexOf('http') === 0;
@@ -59,7 +60,7 @@ function ItemDetails() {
 
     if (loading) {
         return (
-            <div className="main-content">
+            <div className="item-details main-content">
                 <Loader />
             </div>
         );
@@ -67,14 +68,14 @@ function ItemDetails() {
 
     if (errorMessage) {
         return (
-            <div className="main-content">
+            <div className="item-details main-content">
                 <ErrorMessage message={errorMessage} />
             </div>
         );
     }
 
     if (!item) {
-        return <div className="main-content" />;
+        return <div className="item-details main-content" />;
     }
 
     const externalUrl = hasExternalUrl(item.url);
@@ -88,7 +89,7 @@ function ItemDetails() {
     const pollVotes = item.poll_votes_count ?? 0;
 
     return (
-        <div className="main-content">
+        <div className="item-details main-content">
             <div className="item">
                 <div className="mobile item-header">
                     <p className="title-block">

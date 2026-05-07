@@ -1,0 +1,27 @@
+@import '../../styles/media';
+@import '../../styles/theme_variables';
+
+/* The original Angular SCSS used the `#footer` id selector. We keep `id="footer"`
+   on the React root so theme rules in `_themes.scss` (`.{theme} #footer { ... }`)
+   still apply, and we additionally scope the component-local rules under
+   `.footer` so the bare `a:hover` selector doesn't leak. */
+.footer {
+    position: relative;
+    padding: 10px;
+    height: 60px;
+    letter-spacing: 0.7px;
+    text-align: center;
+
+    a {
+        font-weight: bold;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    @media #{$mobile-only} {
+        display: none;
+    }
+}

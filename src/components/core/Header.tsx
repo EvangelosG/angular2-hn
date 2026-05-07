@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 
 import { useSettings } from '../../context/SettingsContext';
 import Settings from './Settings';
+import './Header.scss';
 
 function Header() {
     const { settings, toggleSettings } = useSettings();
@@ -11,7 +12,7 @@ function Header() {
     };
 
     return (
-        <header>
+        <header className="header">
             <div id="header">
                 <NavLink to="/news/1" className="home-link" onClick={scrollTop} end={false}>
                     <div className="logo-inner"></div>
