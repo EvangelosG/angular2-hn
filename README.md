@@ -1,11 +1,11 @@
 <p align="center">
   <a href="https://angular2-hn.firebaseapp.com">
-    <img alt="Angular 2 HN" title="Angular 2 HN" src="http://i.imgur.com/J303pQ4.png" width="150">
+    <img alt="HN PWA" title="HN PWA" src="http://i.imgur.com/J303pQ4.png" width="150">
   </a>
 </p>
 
 <p align="center">
-  A progressive Hacker News client built with Angular
+  A progressive Hacker News client built with React, TypeScript and Vite.
 </p>
 
 <p align="center">
@@ -14,75 +14,111 @@
 
 <p align="center">
   <a href="/CONTRIBUTING.md"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
-  <a href="https://travis-ci.org/housseindjirdeh/angular2-hn"><img alt="Build Status" src="https://travis-ci.org/housseindjirdeh/angular2-hn.svg?branch=master"></a>
 </p>
 
 ---
 
-:zap: **Fast:** Service Worker App Shell + Dynamic Content model to achieve faster load times with and without a network.
+:zap: **Fast:** Service Worker (Workbox via [vite-plugin-pwa](https://vite-pwa-org.netlify.app/)) precaches the app shell and uses a `NetworkFirst` strategy for the HN API, so the app loads quickly with or without a network.
 
-:iphone: **Responsive:** Completely responsive UI that can be installed to your mobile home screen to provide a native feel.
+:iphone: **Responsive:** Mobile-first UI that can be installed to the home screen for a native-app feel.
 
-:rocket: **Progressive:** [Lighthouse](https://github.com/GoogleChrome/lighthouse) score of 87/100.
+:rocket: **Progressive:** Web App Manifest, installable PWA, three built-in themes, and persisted user preferences.
 
-<p align="center">
-  <img src = "http://i.imgur.com/fzJzLFO.png" width=500>
-</p>
+## Tech stack
 
-## Mobile Preview
+- [React 18](https://react.dev/) with [TypeScript](https://www.typescriptlang.org/)
+- [Vite 5](https://vitejs.dev/) for dev server and production builds
+- [react-router-dom v6](https://reactrouter.com/) for client-side routing (with `React.lazy` + `Suspense` for code-split routes)
+- [Sass](https://sass-lang.com/) (per-component `.scss` files, scoped via component-level wrapper classes)
+- [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/) for unit + integration tests
+- [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox under the hood) for service worker + offline caching
+- [Firebase Hosting](https://firebase.google.com/docs/hosting) for deployment
 
-<p align="center">
-  <img src = "http://i.imgur.com/ZloA1hn.gif">
-</p>
+## Getting started
 
-## Laptop Preview
+This project targets **Node 22**.
 
-<p align="center">
-  <img src = "http://i.imgur.com/MrKHaln.gif">
-</p>
+```bash
+nvm use 22         # or: nvm install 22
+npm install
+npm run dev        # vite dev server on http://localhost:4200
+```
 
-## Offline Support
+### Other scripts
 
-This app uses [Workbox](https://workboxjs.org/) to generate a service worker as part of the build step to load quickly and work offline.
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server. |
+| `npm run build` | Type-check (`tsc -b`) and produce a production build in `dist/`. |
+| `npm run preview` | Serve the built `dist/` locally (handy for verifying the production bundle and the registered service worker). |
+| `npm test` | Run the Vitest suite once (CI-mode). |
+| `npm run test:watch` | Run Vitest in watch mode. |
+| `npm run lint` | Lint `.ts` / `.tsx` sources with ESLint. |
+| `npm run format` | Format `src/` with Prettier. |
 
-## Manifest
+## Project structure
 
-With Chromium based browsers for Android (Chrome, Opera, etc...), Angular 2 HN includes a Web App Manifest that allows you to install to your homescreen.
-
-<p align="center">
-  <img src = "http://i.imgur.com/1RaaNkr.png">
-</p>
+```
+.
+├── index.html              # Vite entry HTML (PWA <link rel="manifest"> + GA snippet)
+├── vite.config.ts          # Vite + vite-plugin-pwa configuration
+├── public/                 # Static assets copied verbatim into dist/
+│   ├── manifest.json
+│   ├── favicon.ico
+│   └── assets/
+│       ├── icons/
+│       └── images/
+└── src/
+    ├── main.tsx            # React entrypoint
+    ├── App.tsx             # Router + Layout (theme wrapper, GA pageview hook)
+    ├── components/
+    │   ├── core/           # Header, Footer, Settings popup
+    │   ├── feeds/          # Feed (paginated story list) + Item card
+    │   ├── item-details/   # ItemDetails + recursive Comment
+    │   ├── user/           # User profile
+    │   └── shared/         # Loader, ErrorMessage
+    ├── context/            # SettingsContext (theme + font + spacing + persistence)
+    ├── hooks/              # useHackerNewsApi (fetchFeed / fetchItemContent / fetchUser)
+    ├── models/             # Story, User, Comment, FeedType, Settings, PollResult
+    ├── utils/              # commentFormatter
+    ├── styles/             # Global SCSS theme engine + media mixins
+    ├── integration/        # Cross-component navigation tests
+    └── test-setup.ts       # Vitest setup (jest-dom matchers)
+```
 
 ## Themes
 
-Built in theme engine!
+Built-in theme engine. Pick one from the cog icon in the header:
 
-Current themes:
-* Default
-* Night
-* Black (AMOLED)
+- Default
+- Night
+- Black (AMOLED)
 
-More to come!
+The chosen theme is persisted to `localStorage`. If no theme has been set, the app honours the OS-level `prefers-color-scheme: dark` query.
 
-## Areas of improvement
+## Offline support
 
- - Realtime updating using the Firebase SDK (may need to add option to settings so service worker can still rely on REST endpoints)
- - Server side rendering
+The PWA service worker (built by `vite-plugin-pwa` with Workbox) precaches the static assets and applies a `NetworkFirst` strategy to the HN API at `https://node-hnapi.herokuapp.com/` so recently-viewed pages stay available offline.
 
-Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [file an issue](https://github.com/hdjirdeh/angular2-hn/issues/new)! Feature requests are always welcome.
+To verify locally:
 
-## Build process
+```bash
+npm run build
+npm run preview
+```
 
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
+Open the printed URL, then check **DevTools → Application → Service Workers** (a worker should be registered) and **Application → Manifest** (the PWA manifest should be detected).
 
- - Clone or download the repo
- - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
+## Deployment
 
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+The production build emits to `dist/`, which Firebase Hosting serves directly:
+
+```bash
+npm run build
+firebase deploy
+```
+
+`firebase.json` already points `hosting.public` at `dist/` and rewrites all routes to `/index.html` for SPA routing.
 
 ## Contributors
 

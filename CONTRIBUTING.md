@@ -1,27 +1,42 @@
 # Contributing
 
-Thank you for your interest in contributing! Please feel free to put up a PR for any issue or feature request.
-Even if you have little to no experience with Angular, I'll be more than happy to help. :)
+Thanks for your interest in contributing! Issues and PRs are very welcome.
 
 ## Setup
 
-1. Fork the repo
-2. Clone your fork
-3. Make a branch for your feature or bug fix
-4. If you don't have Angular CLI installed: `npm install -g angular-cli@latest`
-5. `ng init`
-6. Type `n` for each file to not overwrite any file changes
-7. Run `npm start` and open `localhost:4200` in a browser
-8. Work your magic
-9. Run `npm run build` or `npm run static-serve` to kick off a production build and make sure nothing is broken
-10. To test service worker changes:
-  * `npm run build` to kick off a fresh build and update the `dist/` directory
-  * `npm run precache` to generate the service worker file
-  * `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
-11. Add yourself to the [contributor's list](https://github.com/hdjirdeh/angular2-hn#contributors) in the README!
-12. Commit your changes and reference the issue you're addressing (for example: `git commit -am 'Commit message. Closes #5'`)
-13. Push your branch to your fork
-14. Create a pull request from your branch on your fork to `master` on this repo
-15. Have your branch get merged in! :star2:
+1. Fork the repo and clone your fork.
+2. Use Node 22 (`nvm use 22`).
+3. Install dependencies: `npm install`.
+4. Make a topic branch: `git checkout -b my-feature`.
 
-If you experience a problem at any point, please don't hesitate to file an issue or send me a message!
+## Dev workflow
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server on `http://localhost:4200`. |
+| `npm test` | Run the Vitest suite once. Add unit/integration tests alongside any new code. |
+| `npm run test:watch` | Vitest in watch mode while you iterate. |
+| `npm run lint` | ESLint. Must be clean before opening a PR. |
+| `npm run format` | Prettier — formatting must match `.prettierrc` before submitting. |
+| `npm run build` | Type-checks + production build. Must succeed before opening a PR. |
+| `npm run preview` | Serves the production build locally so you can verify the service worker registration and PWA manifest in DevTools. |
+
+## Code style
+
+- TypeScript strict mode is on; no `any` escape hatches and no `// @ts-ignore` without a comment explaining why.
+- Component SCSS lives next to its `.tsx` and is wrapped under a component-specific class. Bare element selectors (e.g. `a { ... }`) MUST be nested inside that wrapper to avoid leaking globally — React has no `ViewEncapsulation`.
+- Keep components small and presentation-focused; talk to the API through `src/hooks/useHackerNewsApi.ts` so it can be mocked in tests.
+- Follow the existing Prettier config (4-space tabs, single quotes, trailing commas: `es5`, 120-column print width).
+
+## Tests
+
+- Unit tests live next to the component (`Foo.tsx` ↔ `Foo.test.tsx`).
+- Cross-component tests live in `src/integration/`.
+- Aim to add at least one test for any new component, hook, or utility — please don't let coverage shrink.
+
+## Pull requests
+
+1. Make sure `npm run lint`, `npm test`, and `npm run build` all pass.
+2. Push your branch to your fork.
+3. Open a PR against `master`. Reference any related issue in the description (e.g. `Closes #5`).
+4. CI/review will follow up — happy to iterate together.

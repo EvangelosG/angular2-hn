@@ -14,7 +14,7 @@ function NotFound() {
     return <p>Not found</p>;
 }
 
-function Layout() {
+export function Layout() {
     const { settings } = useSettings();
     const location = useLocation();
 
