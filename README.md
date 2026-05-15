@@ -1,88 +1,85 @@
 <p align="center">
-  <a href="https://angular2-hn.firebaseapp.com">
-    <img alt="Angular 2 HN" title="Angular 2 HN" src="http://i.imgur.com/J303pQ4.png" width="150">
-  </a>
+  <img alt="React HN" title="React HN" src="http://i.imgur.com/J303pQ4.png" width="150">
 </p>
 
 <p align="center">
-  A progressive Hacker News client built with Angular
-</p>
-
-<p align="center">
-  <a href="https://angular2-hn.firebaseapp.com">View App</a>
-</p>
-
-<p align="center">
-  <a href="/CONTRIBUTING.md"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
-  <a href="https://travis-ci.org/housseindjirdeh/angular2-hn"><img alt="Build Status" src="https://travis-ci.org/housseindjirdeh/angular2-hn.svg?branch=master"></a>
+  A progressive Hacker News client built with React, TypeScript, and Vite
 </p>
 
 ---
 
-:zap: **Fast:** Service Worker App Shell + Dynamic Content model to achieve faster load times with and without a network.
+:zap: **Fast:** Vite-powered dev/build + PWA service worker for instant loads and offline support.
 
-:iphone: **Responsive:** Completely responsive UI that can be installed to your mobile home screen to provide a native feel.
+:iphone: **Responsive:** Fully responsive UI that can be installed to your mobile home screen.
 
-:rocket: **Progressive:** [Lighthouse](https://github.com/GoogleChrome/lighthouse) score of 87/100.
+:rocket: **Progressive:** PWA with service worker caching, installability, and offline support.
 
-<p align="center">
-  <img src = "http://i.imgur.com/fzJzLFO.png" width=500>
-</p>
+## Tech Stack
 
-## Mobile Preview
+- **React 19** with TypeScript
+- **React Router v7** for client-side routing with lazy-loaded routes
+- **Vite** for dev server and production builds
+- **vite-plugin-pwa** for service worker generation and PWA support
+- **SCSS** with a theme engine (Default, Night, AMOLED Black)
+- **Google Analytics** for page view tracking
 
-<p align="center">
-  <img src = "http://i.imgur.com/ZloA1hn.gif">
-</p>
+## Features
 
-## Laptop Preview
+- Browse Hacker News feeds: Top, New, Show, Ask, Jobs
+- View item details with nested comment threads
+- User profiles
+- Theming: Default, Night, and Black (AMOLED) themes
+- Customizable font size and list spacing
+- PWA: installable, works offline
+- Responsive: mobile-first design
 
-<p align="center">
-  <img src = "http://i.imgur.com/MrKHaln.gif">
-</p>
+## Getting Started
 
-## Offline Support
+```bash
+# Install dependencies
+npm install
 
-This app uses [Workbox](https://workboxjs.org/) to generate a service worker as part of the build step to load quickly and work offline.
+# Start dev server
+npm run dev
 
-## Manifest
+# Build for production
+npm run build
 
-With Chromium based browsers for Android (Chrome, Opera, etc...), Angular 2 HN includes a Web App Manifest that allows you to install to your homescreen.
+# Preview production build
+npm run preview
+```
 
-<p align="center">
-  <img src = "http://i.imgur.com/1RaaNkr.png">
-</p>
+## Project Structure
+
+```
+src/
+├── api/             # API service (HN PWA API)
+├── components/
+│   ├── layout/      # AppLayout, Header, Footer, Settings
+│   ├── feeds/       # FeedItem component
+│   ├── item-details/# Comment component
+│   └── shared/      # Loader, ErrorMessage
+├── context/         # SettingsContext (theme, preferences)
+├── pages/           # FeedPage, ItemDetailsPage, UserPage
+├── styles/          # Global SCSS, themes, variables
+├── types/           # TypeScript interfaces
+├── utils/           # Utility functions
+├── router.tsx       # React Router configuration
+└── main.tsx         # App entry point
+```
 
 ## Themes
 
-Built in theme engine!
+Built-in theme engine with:
+- Default (light)
+- Night (dark)
+- Black (AMOLED)
 
-Current themes:
-* Default
-* Night
-* Black (AMOLED)
+Supports `prefers-color-scheme: dark` media query for automatic theme detection.
 
-More to come!
+## API
 
-## Areas of improvement
-
- - Realtime updating using the Firebase SDK (may need to add option to settings so service worker can still rely on REST endpoints)
- - Server side rendering
-
-Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [file an issue](https://github.com/hdjirdeh/angular2-hn/issues/new)! Feature requests are always welcome.
-
-## Build process
-
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
-
- - Clone or download the repo
- - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
-
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+Uses the [HN PWA API](https://api.hnpwa.com/) (`https://api.hnpwa.com/v0/`) for fetching stories, comments, and user data.
 
 ## Contributors
 
