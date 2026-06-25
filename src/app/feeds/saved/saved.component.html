@@ -1,0 +1,12 @@
+<div class="main-content">
+  <h1 class="page-title">Saved Stories</h1>
+  <ol *ngIf="bookmarks.length > 0">
+    <li *ngFor="let item of bookmarks" class="post">
+      <item class="item-block" [item]="item"></item>
+    </li>
+  </ol>
+  <div class="empty" *ngIf="bookmarks.length === 0">
+    <p class="empty-title">No saved stories yet</p>
+    <p>Tap the bookmark icon on any story to save it here — your reading list works even offline.</p>
+  </div>
+</div>

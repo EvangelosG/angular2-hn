@@ -63,6 +63,36 @@ p {
     letter-spacing: 0.5px;
   }
 
+  .bookmark-btn {
+    float: right;
+    margin-left: 8px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #828282;
+    line-height: 0;
+    -webkit-tap-highlight-color: transparent;
+
+    svg {
+      fill: none;
+      transition: fill 0.15s ease, color 0.15s ease, transform 0.1s ease;
+      vertical-align: middle;
+    }
+
+    &:hover svg {
+      transform: scale(1.15);
+    }
+
+    &.saved {
+      color: #ff6600;
+
+      svg {
+        fill: currentColor;
+      }
+    }
+  }
+
   .item-details {
     padding: 10px;
   }
