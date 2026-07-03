@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable, forkJoin } from 'rxjs';
 import fetch from 'unfetch';
-import {map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { Story } from '../models/story';
 import { User } from '../models/user';
 import { PollResult } from '../models/poll-result';
 
-// wrap fetch in observable so we can keep it chill
 @Injectable()
 export class HackerNewsAPIService {
   baseUrl: string;
@@ -21,19 +20,26 @@ export class HackerNewsAPIService {
   }
 
   fetchItemContent(id: number): Observable<Story> {
-    return lazyFetch(`${this.baseUrl}/item/${id}`).pipe(map((story: Story) => {
-      if (story.type === 'poll') {
-        let numberOfPollOptions = story.poll.length;
-        story.poll_votes_count = 0;
-        for (let i = 1; i <= numberOfPollOptions; i++) {
-          this.fetchPollContent(story.id + i).subscribe(pollResults => {
-            story.poll[i - 1] = pollResults;
-            story.poll_votes_count += pollResults.points;
-          });
+    return lazyFetch<Story>(`${this.baseUrl}/item/${id}`).pipe(
+      switchMap((story: Story) => {
+        if (story.type === 'poll' && story.poll && story.poll.length > 0) {
+          const pollRequests = story.poll.map((_: PollResult, i: number) =>
+            this.fetchPollContent(story.id + i + 1)
+          );
+          return forkJoin(pollRequests).pipe(
+            map((pollResults: PollResult[]) => {
+              story.poll = pollResults;
+              story.poll_votes_count = pollResults.reduce((sum, p) => sum + p.points, 0);
+              return story;
+            })
+          );
         }
-      }
-      return story;
-    }));
+        return new Observable<Story>(observer => {
+          observer.next(story);
+          observer.complete();
+        });
+      })
+    );
   }
 
   fetchPollContent(id: number): Observable<PollResult> {
@@ -45,7 +51,7 @@ export class HackerNewsAPIService {
   }
 }
 
-function lazyFetch<T>(url, options?) {
+function lazyFetch<T>(url: string, options?): Observable<T> {
   return new Observable<T>(fetchObserver => {
     let cancelToken = false;
     fetch(url, options)
@@ -63,4 +69,3 @@ function lazyFetch<T>(url, options?) {
     };
   });
 }
-
