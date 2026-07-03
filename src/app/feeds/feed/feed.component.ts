@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
@@ -11,8 +10,7 @@ import { Story } from '../../shared/models/story';
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.scss']
 })
-
-export class FeedComponent implements OnInit {
+export class FeedComponent implements OnInit, OnDestroy {
   typeSub: Subscription;
   pageSub: Subscription;
   items: Story[];
@@ -30,7 +28,7 @@ export class FeedComponent implements OnInit {
     this.typeSub = this.route
       .data
       .subscribe(data => {
-        this.feedType = (data as any).feedType;
+        this.feedType = data.feedType;
       });
 
     this.pageSub = this.route.params.subscribe(params => {
@@ -45,5 +43,18 @@ export class FeedComponent implements OnInit {
           }
         );
     });
+  }
+
+  ngOnDestroy() {
+    if (this.typeSub) {
+      this.typeSub.unsubscribe();
+    }
+    if (this.pageSub) {
+      this.pageSub.unsubscribe();
+    }
+  }
+
+  trackByItemId(index: number, item: Story): number {
+    return item.id;
   }
 }
