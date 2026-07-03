@@ -1,43 +1,28 @@
-@import "./app/shared/scss/themes";
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 html {
-  height: 100%;
-  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-  margin: 0;
-  height: 100%;
-  width: 100%;
+  min-height: 100vh;
 }
 
-pre {
-    white-space: pre-wrap;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.app-loader {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-}
-
-@media screen and (max-width: 768px) {
-  .app-loader {
-    background-color: #fff;
-  }
-}
-
-app-root:empty + .app-loader {
-    opacity: 1;
-    z-index: 100;
-}
-app-root:empty + .app-loader .logo {
-    width: 20vh;
+img {
+  max-width: 100%;
+  display: block;
 }
