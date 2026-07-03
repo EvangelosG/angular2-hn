@@ -1,19 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { Comment } from '../../shared/models/comment';
 
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.component.html',
-  styleUrls: ['./comment.component.scss']
+  styleUrls: ['./comment.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommentComponent implements OnInit {
+export class CommentComponent {
   @Input() comment: Comment;
-  collapse: boolean;
+  collapse = false;
 
-  constructor() {}
-
-  ngOnInit() {
-    this.collapse = false;
+  trackByCommentId(index: number, comment: Comment): number {
+    return comment.id;
   }
 }
