@@ -5,6 +5,12 @@
 /dev-dist
 /tmp
 /out-tsc
+
+# playwright
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
 # Only exists if Bazel was run
 /bazel-out
 

@@ -81,6 +81,7 @@ This project is built with [Vite](https://vitejs.dev/) using the React + TypeScr
  - `npm run build` to produce a production build in the output directory (`dist/`)
  - `npm run preview` to locally preview the production build
  - `npm test` to run the unit tests (Vitest + React Testing Library)
+ - `npm run test:e2e` to run the end-to-end tests (Playwright, HN API mocked for determinism). First run `npx playwright install chromium` to download the browser.
 
 Note: The service worker is only generated in the production build. To test offline / PWA behavior, run `npm run build` followed by `npm run preview`.
 

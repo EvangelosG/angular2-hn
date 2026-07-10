@@ -47,5 +47,8 @@ export default defineConfig({
         environment: 'jsdom',
         setupFiles: './src/test/setup.ts',
         css: false,
+        // Unit tests live under src/; Playwright e2e specs live under e2e/.
+        include: ['src/**/*.{test,spec}.{ts,tsx}'],
+        exclude: ['node_modules', 'dist', 'e2e/**'],
     },
 });
