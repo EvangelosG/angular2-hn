@@ -1,0 +1,15 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router-dom';
+
+import { SettingsProvider } from './context/SettingsContext';
+import { router } from './routes';
+import './index.scss';
+
+createRoot(document.getElementById('root') as HTMLElement).render(
+    <StrictMode>
+        <SettingsProvider>
+            <RouterProvider router={router} />
+        </SettingsProvider>
+    </StrictMode>
+);
