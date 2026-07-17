@@ -1,0 +1,25 @@
+<div class="search-filter">
+  <div class="search-box">
+    <input
+      #searchBox
+      type="text"
+      class="search-input"
+      [attr.placeholder]="placeholder"
+      [value]="searchTerm"
+      (input)="onInput(searchBox.value)"
+      aria-label="Filter stories"
+    />
+    <button
+      *ngIf="searchTerm"
+      type="button"
+      class="clear-button"
+      (click)="clearSearch()"
+      aria-label="Clear search"
+    >
+      ×
+    </button>
+  </div>
+  <p class="search-results-info" *ngIf="isSearching">
+    Showing {{ resultCount }} of {{ totalCount }} stories
+  </p>
+</div>

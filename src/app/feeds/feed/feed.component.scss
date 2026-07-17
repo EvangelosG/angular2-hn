@@ -98,6 +98,16 @@ ol {
   }
 }
 
+.no-results {
+  padding: 24px 40px;
+  font-size: 15px;
+  color: #696969;
+
+  @media #{$mobile-only} {
+    padding: 24px 15px;
+  }
+}
+
 .job-header {
   font-size: 15px;
   padding: 0 40px 10px;

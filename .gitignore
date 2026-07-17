@@ -44,3 +44,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Devin feature-completion goal log
+.devin/feature-progress.log

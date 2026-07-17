@@ -1,0 +1,37 @@
+{
+  "Stop": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "./.devin/scripts/check-feature-complete.sh",
+          "timeout": 60
+        }
+      ]
+    }
+  ],
+  "SessionStart": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"SessionStart\", \"additionalContext\": \"🎯 Feature Completion Goal Tracking Active\\n\\nThis repo has feature completion validation enabled. The agent will continue working until:\\n• Feature directory exists in src/app/\\n• Component files (.ts, .html, .scss) are present\\n• Component has proper Angular decorators\\n• TypeScript compilation succeeds\\n\\nTo test specific features: ./.devin/scripts/check-feature-complete.sh <feature-name> [--strict]\\n\\nProgress is logged to .devin/feature-progress.log\"}}'"
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "^(edit|write)$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "./.devin/scripts/update-progress.sh",
+          "timeout": 10
+        }
+      ]
+    }
+  ]
+}
