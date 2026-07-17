@@ -20,11 +20,37 @@ export class FeedComponent implements OnInit {
   pageNum: number;
   listStart: number;
   errorMessage = '';
+  searchTerm = '';
 
   constructor(
     private _hackerNewsAPIService: HackerNewsAPIService,
     private route: ActivatedRoute
   ) { }
+
+  get filteredItems(): Story[] {
+    if (!this.items) {
+      return [];
+    }
+
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      return this.items;
+    }
+
+    return this.items.filter(item => {
+      const title = (item.title || '').toLowerCase();
+      const domain = (item.domain || '').toLowerCase();
+      return title.indexOf(term) !== -1 || domain.indexOf(term) !== -1;
+    });
+  }
+
+  get hasActiveSearch(): boolean {
+    return this.searchTerm.trim().length > 0;
+  }
+
+  onSearch(term: string) {
+    this.searchTerm = term;
+  }
 
   ngOnInit() {
     this.typeSub = this.route
@@ -34,6 +60,7 @@ export class FeedComponent implements OnInit {
       });
 
     this.pageSub = this.route.params.subscribe(params => {
+      this.searchTerm = '';
       this.pageNum = params['page'] ? +params['page'] : 1;
       this._hackerNewsAPIService.fetchFeed(this.feedType, this.pageNum)
         .subscribe(
