@@ -36,4 +36,9 @@
       </span>
     </span>
   </div>
+  <button type="button" class="save-toggle" [class.saved]="isSaved" (click)="toggleSaved()"
+    [attr.aria-pressed]="isSaved" [attr.aria-label]="isSaved ? 'Remove from saved stories' : 'Save story'">
+    <span aria-hidden="true">{{ isSaved ? '★' : '☆' }}</span>
+    <span class="save-label">{{ isSaved ? 'saved' : 'save' }}</span>
+  </button>
 </div>
