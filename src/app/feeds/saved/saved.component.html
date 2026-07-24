@@ -1,0 +1,13 @@
+<div class="main-content">
+  <h1 class="saved-heading">Saved stories</h1>
+
+  <ol *ngIf="stories.length > 0" class="list-margin">
+    <li *ngFor="let item of stories" class="post">
+      <item class="item-block" [item]="item"></item>
+    </li>
+  </ol>
+
+  <p *ngIf="stories.length === 0" class="saved-empty">
+    You haven't saved any stories yet. Tap the ☆ on a story to save it here.
+  </p>
+</div>

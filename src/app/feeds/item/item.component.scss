@@ -66,3 +66,27 @@ p {
   .item-details {
     padding: 10px;
   }
+
+  .save-toggle {
+    margin-top: 5px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    color: #696969;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &.saved {
+      color: #f0ad4e;
+    }
+
+    .save-label {
+      margin-left: 4px;
+    }
+  }
