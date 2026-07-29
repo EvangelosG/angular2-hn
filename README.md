@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A progressive Hacker News client built with Angular
+  A progressive Hacker News client built with React, TypeScript and Vite
 </p>
 
 <p align="center">
@@ -43,11 +43,11 @@
 
 ## Offline Support
 
-This app uses [Workbox](https://workboxjs.org/) to generate a service worker as part of the build step to load quickly and work offline.
+This app uses [Workbox](https://workboxjs.org/) — through [`vite-plugin-pwa`](https://vite-pwa-org.netlify.app/) — to generate a service worker as part of the build step to load quickly and work offline. The app shell (`index.html`, JS/CSS bundles, icons and the manifest) is precached, and navigations fall back to the cached shell when offline.
 
 ## Manifest
 
-With Chromium based browsers for Android (Chrome, Opera, etc...), Angular 2 HN includes a Web App Manifest that allows you to install to your homescreen.
+With Chromium based browsers for Android (Chrome, Opera, etc...), this app includes a Web App Manifest (`public/manifest.json`) that allows you to install to your homescreen.
 
 <p align="center">
   <img src = "http://i.imgur.com/1RaaNkr.png">
@@ -71,18 +71,41 @@ More to come!
 
 Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [file an issue](https://github.com/hdjirdeh/angular2-hn/issues/new)! Feature requests are always welcome.
 
-## Build process
+## Stack
 
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
+- [React 18](https://react.dev/) with function components and hooks
+- [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vite.dev/) for the dev server and production build
+- [React Router v6](https://reactrouter.com/) (the item and user routes are code split with `React.lazy`)
+- [Sass](https://sass-lang.com/) for the original theme engine
+- [`vite-plugin-pwa`](https://vite-pwa-org.netlify.app/) (Workbox) for the service worker
+- [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/) for tests
+
+## Project layout
+
+```
+src/
+  api/          fetch based Hacker News API client
+  components/   header, settings popup, footer, loader, error message
+  context/      settings provider (theme, font size, spacing, link behaviour)
+  feeds/        feed list and single story row
+  item-details/ story page and the recursive comment tree
+  models/       shared TypeScript interfaces
+  user/         user profile page
+  styles/       theme engine partials shared by every component
+```
+
+## Build process
 
  - Clone or download the repo
  - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
+ - `npm start` (or `npm run dev`) to run the app on `localhost:5173`
+ - `npm run build` to type check and produce a production build in `dist/`
+ - `npm run lint` and `npm test` to run ESLint and the unit tests
 
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+Note: the service worker is only generated for production builds. To test service worker changes:
+ - `npm run build`
+ - `npm run preview` to serve `dist/` with the generated service worker and manifest
 
 ## Contributors
 
