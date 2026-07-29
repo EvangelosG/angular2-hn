@@ -7,7 +7,7 @@ export default defineConfig({
         react(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'assets/icons/*', 'assets/images/*'],
+            includeManifestIcons: false,
             manifest: {
                 name: 'Angular 2 HN',
                 short_name: 'Angular 2 HN',
@@ -24,7 +24,7 @@ export default defineConfig({
                 start_url: './?utm_source=web_app_manifest',
             },
             workbox: {
-                globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,xml}'],
                 navigateFallback: 'index.html',
                 runtimeCaching: [
                     {
