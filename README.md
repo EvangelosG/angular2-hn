@@ -1,11 +1,11 @@
 <p align="center">
   <a href="https://angular2-hn.firebaseapp.com">
-    <img alt="Angular 2 HN" title="Angular 2 HN" src="http://i.imgur.com/J303pQ4.png" width="150">
+    <img alt="React HN" title="React HN" src="http://i.imgur.com/J303pQ4.png" width="150">
   </a>
 </p>
 
 <p align="center">
-  A progressive Hacker News client built with Angular
+  A progressive Hacker News client built with React 18, TypeScript and Vite
 </p>
 
 <p align="center">
@@ -25,6 +25,16 @@
 
 :rocket: **Progressive:** [Lighthouse](https://github.com/GoogleChrome/lighthouse) score of 87/100.
 
+## Stack
+
+* [React 18](https://react.dev/) with function components and hooks
+* [TypeScript](https://www.typescriptlang.org/)
+* [Vite](https://vitejs.dev/) for the dev server and production build
+* [React Router](https://reactrouter.com/) (lazy loaded item and user routes)
+* [Sass](https://sass-lang.com/) for the theme engine and component styles
+* [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox) for the service worker
+* [Vitest](https://vitest.dev/) and [Testing Library](https://testing-library.com/) for unit tests
+
 <p align="center">
   <img src = "http://i.imgur.com/fzJzLFO.png" width=500>
 </p>
@@ -43,11 +53,11 @@
 
 ## Offline Support
 
-This app uses [Workbox](https://workboxjs.org/) to generate a service worker as part of the build step to load quickly and work offline.
+This app uses [Workbox](https://workboxjs.org/), via `vite-plugin-pwa`, to generate a service worker as part of the build step to load quickly and work offline.
 
 ## Manifest
 
-With Chromium based browsers for Android (Chrome, Opera, etc...), Angular 2 HN includes a Web App Manifest that allows you to install to your homescreen.
+With Chromium based browsers for Android (Chrome, Opera, etc...), React HN includes a Web App Manifest that allows you to install to your homescreen.
 
 <p align="center">
   <img src = "http://i.imgur.com/1RaaNkr.png">
@@ -73,16 +83,26 @@ Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [fil
 
 ## Build process
 
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
-
  - Clone or download the repo
  - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
+ - `npm run dev` to start the Vite dev server on `localhost:5173`
+ - `npm run build` to type check and kick off a production build into `dist/`
+ - `npm run preview` to serve the production build (including the service worker) locally
+ - `npm test` to run the unit tests, `npm run lint` to lint the project
 
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+Note: the service worker is only generated for production builds, so use `npm run build && npm run preview` to test offline behaviour.
+
+## Project structure
+
+```
+src/
+  api/          Hacker News REST client (promise based)
+  components/   core (header, footer, settings), feeds, item-details, user, shared
+  context/      SettingsContext: theme, font size, list spacing, link behaviour
+  scss/         theme engine (default, night, amoledblack) and media queries
+  types/        Story, Comment, PollResult, Settings, User models
+  utils/        comment count formatting
+```
 
 ## Contributors
 
