@@ -20,7 +20,7 @@ export class ItemComponent implements OnInit {
   ngOnInit() {}
 
   get hasUrl(): boolean {
-    return this.item.url.indexOf('http') === 0;
+    return !!this.item && !!this.item.url && this.item.url.indexOf('http') === 0;
   }
 
 }
