@@ -11,17 +11,18 @@ import { PollResult } from '../models/poll-result';
 @Injectable()
 export class HackerNewsAPIService {
   baseUrl: string;
+  fetchImpl: (url: string, options?: any) => Promise<any> = fetch;
 
   constructor() {
     this.baseUrl = 'https://node-hnapi.herokuapp.com';
   }
 
   fetchFeed(feedType: string, page: number): Observable<Story[]> {
-    return lazyFetch(`${this.baseUrl}/${feedType}?page=${page}`);
+    return this.lazyFetch(`${this.baseUrl}/${feedType}?page=${page}`);
   }
 
   fetchItemContent(id: number): Observable<Story> {
-    return lazyFetch(`${this.baseUrl}/item/${id}`).pipe(map((story: Story) => {
+    return this.lazyFetch(`${this.baseUrl}/item/${id}`).pipe(map((story: Story) => {
       if (story.type === 'poll') {
         let numberOfPollOptions = story.poll.length;
         story.poll_votes_count = 0;
@@ -37,30 +38,30 @@ export class HackerNewsAPIService {
   }
 
   fetchPollContent(id: number): Observable<PollResult> {
-    return lazyFetch(`${this.baseUrl}/item/${id}`);
+    return this.lazyFetch(`${this.baseUrl}/item/${id}`);
   }
 
   fetchUser(id: string): Observable<User> {
-    return lazyFetch(`${this.baseUrl}/user/${id}`);
+    return this.lazyFetch(`${this.baseUrl}/user/${id}`);
   }
-}
 
-function lazyFetch<T>(url, options?) {
-  return new Observable<T>(fetchObserver => {
-    let cancelToken = false;
-    fetch(url, options)
-      .then(res => {
-        if (!cancelToken) {
-          return res.json()
-            .then(data => {
-              fetchObserver.next(data);
-              fetchObserver.complete();
-            });
-        }
-      }).catch(err => fetchObserver.error(err));
-    return () => {
-      cancelToken = true;
-    };
-  });
+  private lazyFetch<T>(url, options?): Observable<T> {
+    return new Observable<T>(fetchObserver => {
+      let cancelToken = false;
+      this.fetchImpl(url, options)
+        .then(res => {
+          if (!cancelToken) {
+            return res.json()
+              .then(data => {
+                fetchObserver.next(data);
+                fetchObserver.complete();
+              });
+          }
+        }).catch(err => fetchObserver.error(err));
+      return () => {
+        cancelToken = true;
+      };
+    });
+  }
 }
 

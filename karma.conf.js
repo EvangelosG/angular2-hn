@@ -18,7 +18,16 @@ module.exports = function (config) {
     coverageIstanbulReporter: {
       dir: require('path').join(__dirname, './coverage/angular-hnpwa'),
       reports: ['html', 'lcovonly', 'text-summary'],
-      fixWebpackSourcePaths: true
+      fixWebpackSourcePaths: true,
+      thresholds: {
+        emitWarning: false,
+        global: {
+          statements: 90,
+          lines: 90,
+          functions: 90,
+          branches: 85
+        }
+      }
     },
     reporters: ['progress', 'kjhtml'],
     port: 9876,
@@ -26,7 +35,14 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
+      }
+    },
     singleRun: false,
-    restartOnFileChange: true
+    restartOnFileChange: true,
+    failOnEmptyTestSuite: true
   });
 };

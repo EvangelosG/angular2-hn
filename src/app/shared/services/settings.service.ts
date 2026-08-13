@@ -2,20 +2,33 @@ import { Injectable } from '@angular/core';
 
 import { Settings } from '../models/settings';
 
+function parseStoredBoolean(value: string): boolean {
+  if (!value) {
+    return false;
+  }
+  try {
+    return !!JSON.parse(value);
+  } catch (e) {
+    return false;
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
   settings: Settings = {
     showSettings : false,
-    openLinkInNewTab: localStorage.getItem("openLinkInNewTab") ? JSON.parse(localStorage.getItem("openLinkInNewTab")) : false,
+    openLinkInNewTab: parseStoredBoolean(localStorage.getItem("openLinkInNewTab")),
     theme: 'default',
     titleFontSize: localStorage.getItem("titleFontSize") ? localStorage.getItem("titleFontSize") : '16',
     listSpacing: localStorage.getItem("listSpacing") ? localStorage.getItem("listSpacing") : '0',
   };
 
   darkColorSchemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
-  
+
+  private boundColorSchemeChangeHandler = this.handleSystemPreferredColorSchemeChange.bind(this);
+
   constructor() {
     this.subscribeToSystemPreferredColorScheme();
     this.initTheme();
@@ -38,7 +51,7 @@ export class SettingsService {
   subscribeToSystemPreferredColorScheme() {
     this.darkColorSchemeMedia.addEventListener(
       'change',
-      this.handleSystemPreferredColorSchemeChange.bind(this)
+      this.boundColorSchemeChangeHandler
     );
   }
 
@@ -59,7 +72,7 @@ export class SettingsService {
   unSubscribeToSystemPrefferedColorScheme() {
     this.darkColorSchemeMedia.removeEventListener(
       'change',
-      this.handleSystemPreferredColorSchemeChange.bind(this)
+      this.boundColorSchemeChangeHandler
     );
   }
 
