@@ -1,0 +1,51 @@
+/**
+ * Global stylesheet — imported once from `src/main.tsx`.
+ *
+ * Port of the Angular `src/styles.scss`; the theme engine
+ * (`src/app/shared/scss/_themes.scss`) now lives in `./_themes.scss` and is
+ * emitted globally so the root class from the settings context
+ * (`default` | `night` | `amoledblack`) themes the whole tree.
+ */
+@use './themes';
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+.app-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+@media screen and (max-width: 768px) {
+  .app-loader {
+    background-color: #fff;
+  }
+}
+
+#root:empty + .app-loader {
+    opacity: 1;
+    z-index: 100;
+}
+#root:empty + .app-loader .logo {
+    width: 20vh;
+}
