@@ -13,7 +13,11 @@ async function lazyFetch<T>(url: string, options?: RequestInit): Promise<T> {
     if (!res.ok) {
         throw new Error(`Request failed with status ${res.status} for ${url}`);
     }
-    return (await res.json()) as T;
+    const body: unknown = await res.json();
+    if (body !== null && typeof body === 'object' && 'error' in body) {
+        throw new Error(String((body as { error: unknown }).error));
+    }
+    return body as T;
 }
 
 export async function fetchFeed(feedType: string, page: number): Promise<Story[]> {
