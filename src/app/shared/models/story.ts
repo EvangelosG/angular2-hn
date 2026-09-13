@@ -12,6 +12,8 @@ export class Story {
     type: FeedType;
     url: string;
     domain: string;
+    text?: string;
+    content?: string;
     comments: Comment[];
     comments_count: number;
     poll: PollResult[];
