@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { EMPTY, catchError, map, switchMap } from 'rxjs';
 
 import { HackerNewsAPIService } from '../shared/services/hackernews-api.service';
 import { SettingsService } from '../shared/services/settings.service';
+import { SharedComponentsModule } from '../shared/components/shared-components.module';
+import { PipesModule } from '../shared/pipes/pipes.module';
+import { CommentComponent } from './comment/comment.component';
 
 import { Story } from '../shared/models/story';
 import { Settings } from '../shared/models/settings';
@@ -12,40 +16,37 @@ import { Settings } from '../shared/models/settings';
 @Component({
   selector: 'app-item-details',
   templateUrl: './item-details.component.html',
-  styleUrls: ['./item-details.component.scss'],
-  standalone: false
+  styleUrl: './item-details.component.scss',
+  imports: [RouterLink, RouterLinkActive, SharedComponentsModule, PipesModule, CommentComponent]
 })
 export class ItemDetailsComponent implements OnInit {
-  sub: Subscription;
-  item: Story;
-  errorMessage = '';
-  settings: Settings;
+  private readonly _hackerNewsAPIService = inject(HackerNewsAPIService);
+  private readonly _settingsService = inject(SettingsService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly _location = inject(Location);
+  private readonly destroyRef = inject(DestroyRef);
 
-  constructor(
-    private _hackerNewsAPIService: HackerNewsAPIService,
-    private _settingsService: SettingsService,
-    private route: ActivatedRoute,
-    private _location: Location
-  ) {
-    this.settings = this._settingsService.settings;
-  }
+  readonly item = signal<Story | null>(null);
+  readonly errorMessage = signal('');
+  readonly settings: Settings = this._settingsService.settings;
+
+  readonly hasUrl = computed(() => (this.item()?.url ?? '').startsWith('http'));
 
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      let itemID = +params['id'];
-      this._hackerNewsAPIService.fetchItemContent(itemID).subscribe(item => {
-        this.item = item;
-      }, error => this.errorMessage = 'Could not load item comments.');
-    });
+    this.route.params.pipe(
+      map(params => +params['id']),
+      switchMap(itemID => this._hackerNewsAPIService.fetchItemContent(itemID).pipe(
+        catchError(() => {
+          this.errorMessage.set('Could not load item comments.');
+          return EMPTY;
+        })
+      )),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(item => this.item.set(item));
     window.scrollTo(0, 0);
   }
 
   goBack() {
     this._location.back();
   }
-
-  get hasUrl(): boolean {
-    return this.item.url.indexOf('http') === 0;
-  }
-
 }
