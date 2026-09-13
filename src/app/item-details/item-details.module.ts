@@ -1,22 +1,17 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule } from '@angular/router';
+
 import { ItemDetailsComponent } from './item-details.component';
 import { CommentComponent } from './comment/comment.component';
-import { SharedComponentsModule } from '../shared/components/shared-components.module';
-import { PipesModule } from '../shared/pipes/pipes.module';
+import { ITEM_DETAILS_ROUTES } from './item-details.routes';
 
-
-const routes: Routes = [
-  {
-    path: ':id',
-    component: ItemDetailsComponent
-  }
-]
-
+/**
+ * Thin facade over the standalone item-details components.
+ * The app route still lazy-loads this module; consumers can switch to
+ * `loadChildren: () => import('./item-details/item-details.routes').then(m => m.ITEM_DETAILS_ROUTES)`.
+ */
 @NgModule({
-  imports: [ SharedComponentsModule, CommonModule, RouterModule, PipesModule, RouterModule.forChild(routes) ],
-  declarations: [ ItemDetailsComponent, CommentComponent ],
-  exports: [ ItemDetailsComponent, RouterModule]
+  imports: [ ItemDetailsComponent, CommentComponent, RouterModule.forChild(ITEM_DETAILS_ROUTES) ],
+  exports: [ ItemDetailsComponent, CommentComponent, RouterModule ]
 })
 export class ItemDetailsModule {}
