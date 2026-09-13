@@ -7,7 +7,8 @@ import { Settings } from '../../shared/models/settings';
 @Component({
   selector: 'item',
   templateUrl: './item.component.html',
-  styleUrls: ['./item.component.scss']
+  styleUrls: ['./item.component.scss'],
+  standalone: false
 })
 export class ItemComponent implements OnInit {
   @Input() item: Story;

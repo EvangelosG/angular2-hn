@@ -5,7 +5,8 @@ import { Comment } from '../../shared/models/comment';
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.component.html',
-  styleUrls: ['./comment.component.scss']
+  styleUrls: ['./comment.component.scss'],
+  standalone: false
 })
 export class CommentComponent implements OnInit {
   @Input() comment: Comment;
