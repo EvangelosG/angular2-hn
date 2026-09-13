@@ -5,14 +5,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, map, of, switchMap } from 'rxjs';
 
 import { HackerNewsAPIService } from '../shared/services/hackernews-api.service';
-import { SharedComponentsModule } from '../shared/components/shared-components.module';
+import { LoaderComponent } from '../shared/components/loader/loader.component';
+import { ErrorMessageComponent } from '../shared/components/error-message/error-message.component';
 import { User } from '../shared/models/user';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
-  imports: [SharedComponentsModule]
+  imports: [LoaderComponent, ErrorMessageComponent]
 })
 export class UserComponent implements OnInit {
   private _hackerNewsAPIService = inject(HackerNewsAPIService);

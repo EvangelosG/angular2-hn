@@ -26,15 +26,12 @@ describe('SettingsComponent', () => {
     localStorage.clear();
   });
 
-  it('emits closed and toggles the service when the close button is clicked', () => {
-    const closed = vi.fn();
-    fixture.componentInstance.closed.subscribe(closed);
-    const before = settingsService.settings.showSettings;
+  it('toggles the service popup state when the close button is clicked', () => {
+    const before = settingsService.showSettings();
 
     fixture.nativeElement.querySelector('.close').click();
 
-    expect(closed).toHaveBeenCalledTimes(1);
-    expect(settingsService.settings.showSettings).toBe(!before);
+    expect(settingsService.showSettings()).toBe(!before);
   });
 
   it('toggles opening links in a new tab', () => {
@@ -44,7 +41,7 @@ describe('SettingsComponent', () => {
     checkbox.click();
     fixture.detectChanges();
 
-    expect(settingsService.settings.openLinkInNewTab).toBe(true);
+    expect(settingsService.openLinkInNewTab()).toBe(true);
     expect(checkbox.checked).toBe(true);
     expect(localStorage.getItem('openLinkInNewTab')).toBe('true');
   });
@@ -55,7 +52,7 @@ describe('SettingsComponent', () => {
     night.click();
     fixture.detectChanges();
 
-    expect(settingsService.settings.theme).toBe('night');
+    expect(settingsService.theme()).toBe('night');
     expect(localStorage.getItem('theme')).toBe('night');
     expect(night.checked).toBe(true);
   });
@@ -70,8 +67,8 @@ describe('SettingsComponent', () => {
     spacingInput.value = '4';
     spacingInput.dispatchEvent(new KeyboardEvent('keyup'));
 
-    expect(settingsService.settings.titleFontSize).toBe('20');
-    expect(settingsService.settings.listSpacing).toBe('4');
+    expect(settingsService.titleFontSize()).toBe('20');
+    expect(settingsService.listSpacing()).toBe('4');
     expect(localStorage.getItem('titleFontSize')).toBe('20');
     expect(localStorage.getItem('listSpacing')).toBe('4');
   });

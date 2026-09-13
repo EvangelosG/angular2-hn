@@ -9,7 +9,7 @@
                 <h2>Links</h2>
                 <input 
                     type="checkbox" 
-                    [checked]="settings.openLinkInNewTab" 
+                    [checked]="openLinkInNewTab()" 
                     (change)="toggleOpenLinksInNewTab()" />
                     Open links in a new tab
             </div>
@@ -22,7 +22,7 @@
                             name="theme" 
                             type="radio" 
                             value="default" 
-                            [checked]="settings.theme === default.value"
+                            [checked]="theme() === default.value"
                             (click)="selectTheme(default.value)" />
                             Default
                         </label>
@@ -33,7 +33,7 @@
                             name="theme" 
                             type="radio" 
                             value="night" 
-                            [checked]="settings.theme === night.value" 
+                            [checked]="theme() === night.value" 
                             (click)="selectTheme(night.value)" />
                             Night
                         </label>
@@ -45,7 +45,7 @@
                             name="theme" 
                             type="radio" 
                             value="amoledblack" 
-                            [checked]="settings.theme === amoledblack.value"
+                            [checked]="theme() === amoledblack.value"
                             (click)="selectTheme(amoledblack.value)" />
                             Black (AMOLED)
                         </label>
@@ -59,7 +59,7 @@
                         <input 
                             #titleFont 
                             min="1" 
-                            [value]="settings.titleFontSize" 
+                            [value]="titleFontSize()" 
                             name="titleFontSize" 
                             type="number" 
                             (keyup)="changeTitleFont(titleFont.value)" />
@@ -69,12 +69,12 @@
                         <label>
                         List spacing:
                         <input 
-                            #listSpacing 
+                            #listSpace 
                             min="0" 
-                            [value]="settings.listSpacing" 
+                            [value]="listSpacing()" 
                             name="listSpacing" 
                             type="number" 
-                            (keyup)="changeSpacing(listSpacing.value)" />
+                            (keyup)="changeSpacing(listSpace.value)" />
                         </label>
                     </div>
                 </div>

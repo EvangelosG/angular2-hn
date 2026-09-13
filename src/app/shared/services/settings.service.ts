@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
-
-import { Settings } from '../models/settings';
 
 const STORAGE_KEYS = {
   openLinkInNewTab: 'openLinkInNewTab',
@@ -17,57 +15,50 @@ const STORAGE_KEYS = {
 export class SettingsService {
   private readonly darkColorSchemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
 
-  /**
-   * Shared, mutated in place: consumers alias this object and read its fields
-   * from their templates, so it must stay the same reference for the lifetime
-   * of the service.
-   */
-  readonly settings: Settings = {
-    showSettings: false,
-    openLinkInNewTab: readStoredBoolean(STORAGE_KEYS.openLinkInNewTab, false),
-    theme: 'default',
-    titleFontSize: localStorage.getItem(STORAGE_KEYS.titleFontSize) || '16',
-    listSpacing: localStorage.getItem(STORAGE_KEYS.listSpacing) || '0',
-  };
+  readonly showSettings = signal(false);
+  readonly openLinkInNewTab = signal(readStoredBoolean(STORAGE_KEYS.openLinkInNewTab, false));
+  readonly theme = signal(this.initialTheme());
+  readonly titleFontSize = signal(localStorage.getItem(STORAGE_KEYS.titleFontSize) || '16');
+  readonly listSpacing = signal(localStorage.getItem(STORAGE_KEYS.listSpacing) || '0');
 
   constructor() {
-    this.initTheme();
     fromEvent<MediaQueryListEvent>(this.darkColorSchemeMedia, 'change')
       .pipe(takeUntilDestroyed())
       .subscribe(event => this.setTheme(systemTheme(event.matches)));
   }
 
   toggleSettings() {
-    this.settings.showSettings = !this.settings.showSettings;
+    this.showSettings.update(shown => !shown);
   }
 
   toggleOpenLinksInNewTab() {
-    this.settings.openLinkInNewTab = !this.settings.openLinkInNewTab;
-    localStorage.setItem(STORAGE_KEYS.openLinkInNewTab, JSON.stringify(this.settings.openLinkInNewTab));
+    this.openLinkInNewTab.update(open => !open);
+    localStorage.setItem(STORAGE_KEYS.openLinkInNewTab, JSON.stringify(this.openLinkInNewTab()));
   }
 
   setTheme(theme: string) {
-    this.settings.theme = theme;
+    this.theme.set(theme);
     localStorage.setItem(STORAGE_KEYS.theme, theme);
   }
 
   setFont(fontSize: string) {
-    this.settings.titleFontSize = fontSize;
+    this.titleFontSize.set(fontSize);
     localStorage.setItem(STORAGE_KEYS.titleFontSize, fontSize);
   }
 
   setSpacing(listSpace: string) {
-    this.settings.listSpacing = listSpace;
+    this.listSpacing.set(listSpace);
     localStorage.setItem(STORAGE_KEYS.listSpacing, listSpace);
   }
 
-  private initTheme() {
+  private initialTheme(): string {
     const savedTheme = localStorage.getItem(STORAGE_KEYS.theme);
     if (savedTheme) {
-      this.settings.theme = savedTheme;
-    } else {
-      this.setTheme(systemTheme(this.darkColorSchemeMedia.matches));
+      return savedTheme;
     }
+    const theme = systemTheme(this.darkColorSchemeMedia.matches);
+    localStorage.setItem(STORAGE_KEYS.theme, theme);
+    return theme;
   }
 }
 

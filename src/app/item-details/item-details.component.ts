@@ -6,18 +6,18 @@ import { EMPTY, catchError, map, switchMap } from 'rxjs';
 
 import { HackerNewsAPIService } from '../shared/services/hackernews-api.service';
 import { SettingsService } from '../shared/services/settings.service';
-import { SharedComponentsModule } from '../shared/components/shared-components.module';
-import { PipesModule } from '../shared/pipes/pipes.module';
+import { LoaderComponent } from '../shared/components/loader/loader.component';
+import { ErrorMessageComponent } from '../shared/components/error-message/error-message.component';
+import { CommentPipe } from '../shared/pipes/comment.pipe';
 import { CommentComponent } from './comment/comment.component';
 
 import { Story } from '../shared/models/story';
-import { Settings } from '../shared/models/settings';
 
 @Component({
   selector: 'app-item-details',
   templateUrl: './item-details.component.html',
   styleUrl: './item-details.component.scss',
-  imports: [RouterLink, RouterLinkActive, SharedComponentsModule, PipesModule, CommentComponent]
+  imports: [RouterLink, RouterLinkActive, LoaderComponent, ErrorMessageComponent, CommentPipe, CommentComponent]
 })
 export class ItemDetailsComponent implements OnInit {
   private readonly _hackerNewsAPIService = inject(HackerNewsAPIService);
@@ -28,7 +28,7 @@ export class ItemDetailsComponent implements OnInit {
 
   readonly item = signal<Story | null>(null);
   readonly errorMessage = signal('');
-  readonly settings: Settings = this._settingsService.settings;
+  readonly openLinkInNewTab = this._settingsService.openLinkInNewTab.asReadonly();
 
   readonly hasUrl = computed(() => (this.item()?.url ?? '').startsWith('http'));
 

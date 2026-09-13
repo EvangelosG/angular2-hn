@@ -1,7 +1,7 @@
-<div [style.margin-bottom.px]="settings.listSpacing">
+<div [style.margin-bottom.px]="listSpacing()">
   @if (hasUrl()) {
     <p>
-      <a class="title" [style.font-size.px]="settings.titleFontSize" [href]="item().url" [attr.target]="settings.openLinkInNewTab ? '_blank' : null" [attr.rel]="settings.openLinkInNewTab ? 'noopener' : null">
+      <a class="title" [style.font-size.px]="titleFontSize()" [href]="item().url" [attr.target]="openLinkInNewTab() ? '_blank' : null" [attr.rel]="openLinkInNewTab() ? 'noopener' : null">
         {{ item().title }}
       </a>
       @if (item().domain) {
@@ -10,7 +10,7 @@
     </p>
   } @else {
     <p>
-      <a class="title" [style.font-size.px]="settings.titleFontSize" [routerLink]="['/item', item().id]" routerLinkActive="active">
+      <a class="title" [style.font-size.px]="titleFontSize()" [routerLink]="['/item', item().id]" routerLinkActive="active">
         {{ item().title }}
       </a>
     </p>

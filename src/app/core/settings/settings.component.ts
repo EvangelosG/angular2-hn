@@ -1,7 +1,6 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { SettingsService } from '../../shared/services/settings.service';
-import { Settings } from '../../shared/models/settings';
 
 @Component({
   selector: 'app-settings',
@@ -11,13 +10,13 @@ import { Settings } from '../../shared/models/settings';
 export class SettingsComponent {
   private readonly settingsService = inject(SettingsService);
 
-  readonly settings: Settings = this.settingsService.settings;
-
-  readonly closed = output<void>();
+  readonly openLinkInNewTab = this.settingsService.openLinkInNewTab.asReadonly();
+  readonly theme = this.settingsService.theme.asReadonly();
+  readonly titleFontSize = this.settingsService.titleFontSize.asReadonly();
+  readonly listSpacing = this.settingsService.listSpacing.asReadonly();
 
   closeSettings() {
     this.settingsService.toggleSettings();
-    this.closed.emit();
   }
 
   toggleOpenLinksInNewTab() {

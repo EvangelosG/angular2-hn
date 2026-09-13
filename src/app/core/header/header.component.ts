@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ViewportScroller } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -15,15 +15,10 @@ export class HeaderComponent {
   private readonly settingsService = inject(SettingsService);
   private readonly viewportScroller = inject(ViewportScroller);
 
-  readonly showSettings = signal(this.settingsService.settings.showSettings);
+  readonly showSettings = this.settingsService.showSettings.asReadonly();
 
   toggleSettings() {
     this.settingsService.toggleSettings();
-    this.syncShowSettings();
-  }
-
-  syncShowSettings() {
-    this.showSettings.set(this.settingsService.settings.showSettings);
   }
 
   scrollTop() {

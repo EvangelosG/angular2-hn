@@ -23,7 +23,7 @@ describe('HeaderComponent', () => {
   });
 
   afterEach(() => {
-    settingsService.settings.showSettings = false;
+    settingsService.showSettings.set(false);
   });
 
   it('renders the navigation links', () => {
@@ -36,19 +36,19 @@ describe('HeaderComponent', () => {
     expect(fixture.nativeElement.querySelector('app-settings')).toBeNull();
   });
 
-  it('toggles the settings popup and keeps the service in sync', () => {
+  it('toggles the settings popup via the service', () => {
     const cog: HTMLElement = fixture.nativeElement.querySelector('img.settings');
 
     cog.click();
     fixture.detectChanges();
     expect(fixture.componentInstance.showSettings()).toBe(true);
-    expect(settingsService.settings.showSettings).toBe(true);
+    expect(settingsService.showSettings()).toBe(true);
     expect(fixture.nativeElement.querySelector('app-settings')).not.toBeNull();
 
     cog.click();
     fixture.detectChanges();
     expect(fixture.componentInstance.showSettings()).toBe(false);
-    expect(settingsService.settings.showSettings).toBe(false);
+    expect(settingsService.showSettings()).toBe(false);
     expect(fixture.nativeElement.querySelector('app-settings')).toBeNull();
   });
 
@@ -61,7 +61,7 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.showSettings()).toBe(false);
-    expect(settingsService.settings.showSettings).toBe(false);
+    expect(settingsService.showSettings()).toBe(false);
     expect(fixture.nativeElement.querySelector('app-settings')).toBeNull();
   });
 });

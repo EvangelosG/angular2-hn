@@ -5,7 +5,8 @@ import { catchError, combineLatest, map, of, switchMap, tap } from 'rxjs';
 
 import { HackerNewsAPIService } from '../../shared/services/hackernews-api.service';
 import { Story } from '../../shared/models/story';
-import { SharedComponentsModule } from '../../shared/components/shared-components.module';
+import { LoaderComponent } from '../../shared/components/loader/loader.component';
+import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { ItemComponent } from '../item/item.component';
 
 type FeedResult =
@@ -16,7 +17,7 @@ type FeedResult =
   selector: 'app-feed',
   templateUrl: './feed.component.html',
   styleUrl: './feed.component.scss',
-  imports: [RouterLink, RouterLinkActive, SharedComponentsModule, ItemComponent]
+  imports: [RouterLink, RouterLinkActive, LoaderComponent, ErrorMessageComponent, ItemComponent]
 })
 export class FeedComponent implements OnInit {
   private readonly hackerNewsAPIService = inject(HackerNewsAPIService);

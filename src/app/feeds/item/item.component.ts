@@ -3,20 +3,21 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { Story } from '../../shared/models/story';
 import { SettingsService } from '../../shared/services/settings.service';
-import { Settings } from '../../shared/models/settings';
-import { PipesModule } from '../../shared/pipes/pipes.module';
+import { CommentPipe } from '../../shared/pipes/comment.pipe';
 
 @Component({
   selector: 'app-feed-item',
   templateUrl: './item.component.html',
   styleUrl: './item.component.scss',
-  imports: [RouterLink, RouterLinkActive, PipesModule]
+  imports: [RouterLink, RouterLinkActive, CommentPipe]
 })
 export class ItemComponent {
   private readonly settingsService = inject(SettingsService);
 
   readonly item = input.required<Story>();
-  readonly settings: Settings = this.settingsService.settings;
+  readonly openLinkInNewTab = this.settingsService.openLinkInNewTab.asReadonly();
+  readonly titleFontSize = this.settingsService.titleFontSize.asReadonly();
+  readonly listSpacing = this.settingsService.listSpacing.asReadonly();
 
   readonly hasUrl = computed(() => this.item().url?.startsWith('http') ?? false);
   readonly isJob = computed(() => this.item().type === 'job');

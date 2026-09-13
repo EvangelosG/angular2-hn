@@ -5,16 +5,7 @@ import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
 import { FeedComponent } from './feed.component';
 import { HackerNewsAPIService } from '../../shared/services/hackernews-api.service';
 import { Story } from '../../shared/models/story';
-import { SettingsService } from '../../shared/services/settings.service';
-import { Settings } from '../../shared/models/settings';
-
-const settings: Settings = {
-  showSettings: false,
-  openLinkInNewTab: false,
-  theme: 'default',
-  titleFontSize: '16',
-  listSpacing: '0',
-};
+import { installMatchMediaStub } from '../../core/testing/match-media.stub';
 
 function makeStory(id: number): Story {
   return {
@@ -23,7 +14,7 @@ function makeStory(id: number): Story {
     points: 1,
     user: 'pg',
     time: 0,
-    time_ago: 0,
+    time_ago: '1 hour ago',
     type: 'story',
     url: 'https://example.com/' + id,
     domain: 'example.com',
@@ -43,6 +34,8 @@ describe('FeedComponent', () => {
   let params$: BehaviorSubject<Record<string, string>>;
   let fetchFeed: ReturnType<typeof vi.fn<(feedType: string, page: number) => Observable<Story[]>>>;
 
+  beforeAll(() => installMatchMediaStub());
+
   beforeEach(async () => {
     params$ = new BehaviorSubject<Record<string, string>>({ page: '1' });
     fetchFeed = vi.fn<(feedType: string, page: number) => Observable<Story[]>>();
@@ -53,7 +46,6 @@ describe('FeedComponent', () => {
       providers: [
         provideRouter([]),
         { provide: HackerNewsAPIService, useValue: { fetchFeed } },
-        { provide: SettingsService, useValue: { settings } },
         {
           provide: ActivatedRoute,
           useValue: { data: of({ feedType: 'news' }), params: params$.asObservable() },

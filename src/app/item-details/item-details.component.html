@@ -5,7 +5,7 @@
         <p class="title-block">
           <span class="back-button" role="button" tabindex="0" aria-label="Back" (click)="goBack()" (keyup.enter)="goBack()"></span>
           @if (hasUrl()) {
-            <a class="title" [href]="item.url" [attr.target]="settings.openLinkInNewTab ? '_blank' : null" [attr.rel]="settings.openLinkInNewTab ? 'noopener' : null">
+            <a class="title" [href]="item.url" [attr.target]="openLinkInNewTab() ? '_blank' : null" [attr.rel]="openLinkInNewTab() ? 'noopener' : null">
               {{item.title}}
             </a>
           } @else {
@@ -19,7 +19,7 @@
       <div class="laptop" [class.item-header]="item.comments_count > 0 || item.type === 'job'" [class.head-margin]="item.text">
         @if (hasUrl()) {
           <p>
-            <a class="title" [href]="item.url" [attr.target]="settings.openLinkInNewTab ? '_blank' : null" [attr.rel]="settings.openLinkInNewTab ? 'noopener' : null">
+            <a class="title" [href]="item.url" [attr.target]="openLinkInNewTab() ? '_blank' : null" [attr.rel]="openLinkInNewTab() ? 'noopener' : null">
             {{item.title}}
             </a>
             @if (item.domain) {

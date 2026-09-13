@@ -4,15 +4,7 @@ import { provideRouter } from '@angular/router';
 import { ItemComponent } from './item.component';
 import { Story } from '../../shared/models/story';
 import { SettingsService } from '../../shared/services/settings.service';
-import { Settings } from '../../shared/models/settings';
-
-const settings: Settings = {
-  showSettings: false,
-  openLinkInNewTab: false,
-  theme: 'default',
-  titleFontSize: '16',
-  listSpacing: '0',
-};
+import { installMatchMediaStub } from '../../core/testing/match-media.stub';
 
 function makeStory(overrides: Partial<Story> = {}): Story {
   return {
@@ -21,7 +13,7 @@ function makeStory(overrides: Partial<Story> = {}): Story {
     points: 42,
     user: 'pg',
     time: 0,
-    time_ago: 0,
+    time_ago: '1 hour ago',
     type: 'story',
     url: 'https://example.com/post',
     domain: 'example.com',
@@ -40,13 +32,20 @@ function makeStory(overrides: Partial<Story> = {}): Story {
 describe('ItemComponent', () => {
   let fixture: ComponentFixture<ItemComponent>;
 
+  beforeAll(() => installMatchMediaStub());
+
   beforeEach(async () => {
+    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [ItemComponent],
-      providers: [provideRouter([]), { provide: SettingsService, useValue: { settings } }],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ItemComponent);
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('renders an external link with domain when the story has an http url', async () => {
@@ -80,6 +79,29 @@ describe('ItemComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('.comment-number')).toBeNull();
     expect(el.textContent).not.toContain('points by');
+  });
+
+  it('reacts to settings changes', async () => {
+    fixture.componentRef.setInput('item', makeStory());
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const el: HTMLElement = fixture.nativeElement;
+    const title = el.querySelector<HTMLAnchorElement>('a.title');
+    expect(title?.getAttribute('target')).toBeNull();
+    expect(title?.style.fontSize).toBe('16px');
+
+    const settingsService = TestBed.inject(SettingsService);
+    settingsService.toggleOpenLinksInNewTab();
+    settingsService.setFont('20');
+    settingsService.setSpacing('8');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(title?.getAttribute('target')).toBe('_blank');
+    expect(title?.getAttribute('rel')).toBe('noopener');
+    expect(title?.style.fontSize).toBe('20px');
+    expect((el.firstElementChild as HTMLElement).style.marginBottom).toBe('8px');
   });
 
   it('does not throw when url is missing', async () => {

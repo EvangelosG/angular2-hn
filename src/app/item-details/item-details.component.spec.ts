@@ -5,7 +5,7 @@ import { BehaviorSubject, Subject, throwError } from 'rxjs';
 import { ItemDetailsComponent } from './item-details.component';
 import { HackerNewsAPIService } from '../shared/services/hackernews-api.service';
 import { SettingsService } from '../shared/services/settings.service';
-import { Settings } from '../shared/models/settings';
+import { installMatchMediaStub } from '../core/testing/match-media.stub';
 import { Story } from '../shared/models/story';
 
 function makeStory(overrides: Partial<Story> = {}): Story {
@@ -15,7 +15,7 @@ function makeStory(overrides: Partial<Story> = {}): Story {
     points: 10,
     user: 'pg',
     time: 0,
-    time_ago: 0,
+    time_ago: '1 hour ago',
     type: 'story',
     url: 'https://example.com/post',
     domain: 'example.com',
@@ -35,12 +35,13 @@ describe('ItemDetailsComponent', () => {
   let fixture: ComponentFixture<ItemDetailsComponent>;
   let params: BehaviorSubject<{ id: string }>;
   let fetchItemContent: ReturnType<typeof vi.fn>;
-  let settings: Settings;
+
+  beforeAll(() => installMatchMediaStub());
 
   beforeEach(async () => {
+    localStorage.clear();
     params = new BehaviorSubject({ id: '42' });
     fetchItemContent = vi.fn();
-    settings = { showSettings: false, openLinkInNewTab: false, theme: 'default', titleFontSize: '16', listSpacing: '0' };
     vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
 
     await TestBed.configureTestingModule({
@@ -48,12 +49,15 @@ describe('ItemDetailsComponent', () => {
       providers: [
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { params: params.asObservable() } },
-        { provide: HackerNewsAPIService, useValue: { fetchItemContent } },
-        { provide: SettingsService, useValue: { settings } }
+        { provide: HackerNewsAPIService, useValue: { fetchItemContent } }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ItemDetailsComponent);
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('shows the loader until the item arrives, then renders it', async () => {
@@ -81,11 +85,14 @@ describe('ItemDetailsComponent', () => {
   });
 
   it('opens external links in a new tab when the setting is enabled', async () => {
-    settings.openLinkInNewTab = true;
     fetchItemContent.mockReturnValue(new BehaviorSubject(makeStory()));
 
     fixture.detectChanges();
     const title = (fixture.nativeElement as HTMLElement).querySelector('.laptop .title');
+    expect(title?.getAttribute('target')).toBeNull();
+
+    TestBed.inject(SettingsService).toggleOpenLinksInNewTab();
+    fixture.detectChanges();
 
     expect(title?.getAttribute('target')).toBe('_blank');
     expect(title?.getAttribute('rel')).toBe('noopener');
