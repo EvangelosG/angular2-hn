@@ -1,10 +1,9 @@
-@import "../../shared/scss/media";
-@import "../../shared/scss/theme_variables";
+@use "../../shared/scss/media";
 
 p {
     margin: 2px 0;
 
-    @media #{$mobile-only} {
+    @media #{media.$mobile-only} {
       margin-bottom: 5px;
       margin-top: 0;
    }
@@ -30,7 +29,7 @@ p {
         text-decoration: underline;
       };
     }
-    @media #{$mobile-only} {
+    @media #{media.$mobile-only} {
       display: none;
     }
   }
@@ -53,7 +52,7 @@ p {
         float: right;
       }
     }
-    @media #{$laptop-only} {
+    @media #{media.$laptop-only} {
       display: none;
     }
   }

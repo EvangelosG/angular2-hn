@@ -15,9 +15,11 @@ import { HackerNewsAPIService } from './shared/services/hackernews-api.service';
 import { SettingsService } from './shared/services/settings.service';
 
 @NgModule({
-    declarations: [AppComponent, FeedComponent, ItemComponent],
+    declarations: [AppComponent],
     imports: [
         BrowserModule,
+        FeedComponent,
+        ItemComponent,
         routing,
         CoreModule,
         SharedComponentsModule,
