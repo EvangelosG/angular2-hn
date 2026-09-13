@@ -1,66 +1,40 @@
 import { Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { fromEvent } from 'rxjs';
 
 import { Settings } from '../models/settings';
+
+const STORAGE_KEYS = {
+  openLinkInNewTab: 'openLinkInNewTab',
+  theme: 'theme',
+  titleFontSize: 'titleFontSize',
+  listSpacing: 'listSpacing',
+} as const;
 
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
-  settings: Settings = {
-    showSettings : false,
-    openLinkInNewTab: localStorage.getItem("openLinkInNewTab") ? JSON.parse(localStorage.getItem("openLinkInNewTab")) : false,
+  private readonly darkColorSchemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+
+  /**
+   * Shared, mutated in place: consumers alias this object and read its fields
+   * from their templates, so it must stay the same reference for the lifetime
+   * of the service.
+   */
+  readonly settings: Settings = {
+    showSettings: false,
+    openLinkInNewTab: readStoredBoolean(STORAGE_KEYS.openLinkInNewTab, false),
     theme: 'default',
-    titleFontSize: localStorage.getItem("titleFontSize") ? localStorage.getItem("titleFontSize") : '16',
-    listSpacing: localStorage.getItem("listSpacing") ? localStorage.getItem("listSpacing") : '0',
+    titleFontSize: localStorage.getItem(STORAGE_KEYS.titleFontSize) || '16',
+    listSpacing: localStorage.getItem(STORAGE_KEYS.listSpacing) || '0',
   };
 
-  darkColorSchemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
-  
   constructor() {
-    this.subscribeToSystemPreferredColorScheme();
     this.initTheme();
-  }
-  
-  ngOnDestroy() {
-    this.unSubscribeToSystemPrefferedColorScheme();
-  }
-
-  handleSystemPreferredColorSchemeChange(event: MediaQueryListEvent) {
-    let theme;
-    if (event.matches) {
-      theme = 'night';
-    } else {
-      theme = 'default';
-    }
-    this.setTheme(theme);
-  }
-  
-  subscribeToSystemPreferredColorScheme() {
-    this.darkColorSchemeMedia.addEventListener(
-      'change',
-      this.handleSystemPreferredColorSchemeChange.bind(this)
-    );
-  }
-
-  initTheme() {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      this.settings.theme = savedTheme;
-    } else {
-      this.darkColorSchemeMedia.dispatchEvent(
-        new MediaQueryListEvent('change', {
-          media: this.darkColorSchemeMedia.media,
-          matches: this.darkColorSchemeMedia.matches
-        })
-      );
-    }
-  }
-
-  unSubscribeToSystemPrefferedColorScheme() {
-    this.darkColorSchemeMedia.removeEventListener(
-      'change',
-      this.handleSystemPreferredColorSchemeChange.bind(this)
-    );
+    fromEvent<MediaQueryListEvent>(this.darkColorSchemeMedia, 'change')
+      .pipe(takeUntilDestroyed())
+      .subscribe(event => this.setTheme(systemTheme(event.matches)));
   }
 
   toggleSettings() {
@@ -69,21 +43,39 @@ export class SettingsService {
 
   toggleOpenLinksInNewTab() {
     this.settings.openLinkInNewTab = !this.settings.openLinkInNewTab;
-    localStorage.setItem("openLinkInNewTab", JSON.stringify(this.settings.openLinkInNewTab));
+    localStorage.setItem(STORAGE_KEYS.openLinkInNewTab, JSON.stringify(this.settings.openLinkInNewTab));
   }
 
-  setTheme(theme) {
+  setTheme(theme: string) {
     this.settings.theme = theme;
-    localStorage.setItem("theme", this.settings.theme);
+    localStorage.setItem(STORAGE_KEYS.theme, theme);
   }
 
-  setFont(fontSize){
+  setFont(fontSize: string) {
     this.settings.titleFontSize = fontSize;
-    localStorage.setItem("titleFontSize", this.settings.titleFontSize);
+    localStorage.setItem(STORAGE_KEYS.titleFontSize, fontSize);
   }
 
-  setSpacing(listSpace){
+  setSpacing(listSpace: string) {
     this.settings.listSpacing = listSpace;
-    localStorage.setItem("listSpacing", this.settings.listSpacing);
+    localStorage.setItem(STORAGE_KEYS.listSpacing, listSpace);
   }
+
+  private initTheme() {
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.theme);
+    if (savedTheme) {
+      this.settings.theme = savedTheme;
+    } else {
+      this.setTheme(systemTheme(this.darkColorSchemeMedia.matches));
+    }
+  }
+}
+
+function systemTheme(prefersDark: boolean): string {
+  return prefersDark ? 'night' : 'default';
+}
+
+function readStoredBoolean(key: string, fallback: boolean): boolean {
+  const stored = localStorage.getItem(key);
+  return stored ? JSON.parse(stored) : fallback;
 }

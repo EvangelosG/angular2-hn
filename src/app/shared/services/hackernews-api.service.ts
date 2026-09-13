@@ -1,66 +1,60 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import fetch from 'unfetch';
-import {map } from 'rxjs/operators';
+import { EMPTY, Observable, catchError, concat, map, merge, of, switchMap } from 'rxjs';
+import { fromFetch } from 'rxjs/fetch';
 
 import { Story } from '../models/story';
 import { User } from '../models/user';
 import { PollResult } from '../models/poll-result';
 
-// wrap fetch in observable so we can keep it chill
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class HackerNewsAPIService {
-  baseUrl: string;
-
-  constructor() {
-    this.baseUrl = 'https://node-hnapi.herokuapp.com';
-  }
+  private readonly baseUrl = 'https://node-hnapi.herokuapp.com';
 
   fetchFeed(feedType: string, page: number): Observable<Story[]> {
-    return lazyFetch(`${this.baseUrl}/${feedType}?page=${page}`);
+    return this.fetchJson<Story[]>(`${this.baseUrl}/${feedType}?page=${page}`);
   }
 
+  /**
+   * Emits the story as soon as it loads. For polls, the story is emitted
+   * again each time one of its poll options resolves (mutated in place), so
+   * results fill in progressively.
+   */
   fetchItemContent(id: number): Observable<Story> {
-    return lazyFetch(`${this.baseUrl}/item/${id}`).pipe(map((story: Story) => {
-      if (story.type === 'poll') {
-        let numberOfPollOptions = story.poll.length;
-        story.poll_votes_count = 0;
-        for (let i = 1; i <= numberOfPollOptions; i++) {
-          this.fetchPollContent(story.id + i).subscribe(pollResults => {
-            story.poll[i - 1] = pollResults;
-            story.poll_votes_count += pollResults.points;
-          });
-        }
-      }
-      return story;
-    }));
+    return this.fetchJson<Story>(`${this.baseUrl}/item/${id}`).pipe(
+      switchMap(story => (story.type === 'poll' ? this.withPollResults(story) : of(story)))
+    );
   }
 
   fetchPollContent(id: number): Observable<PollResult> {
-    return lazyFetch(`${this.baseUrl}/item/${id}`);
+    return this.fetchJson<PollResult>(`${this.baseUrl}/item/${id}`);
   }
 
   fetchUser(id: string): Observable<User> {
-    return lazyFetch(`${this.baseUrl}/user/${id}`);
+    return this.fetchJson<User>(`${this.baseUrl}/user/${id}`);
+  }
+
+  private withPollResults(story: Story): Observable<Story> {
+    story.poll_votes_count = 0;
+    // Poll option ids follow the poll id consecutively: story.id + 1 .. story.id + n
+    const pollResults = story.poll.map((_, index) =>
+      this.fetchPollContent(story.id + index + 1).pipe(
+        map(pollResult => {
+          story.poll[index] = pollResult;
+          story.poll_votes_count += pollResult.points;
+          return story;
+        }),
+        catchError((err: unknown) => {
+          console.error(err);
+          return EMPTY;
+        })
+      )
+    );
+    return concat(of(story), merge(...pollResults));
+  }
+
+  private fetchJson<T>(url: string): Observable<T> {
+    return fromFetch<T>(url, { selector: res => res.json() });
   }
 }
-
-function lazyFetch<T>(url, options?) {
-  return new Observable<T>(fetchObserver => {
-    let cancelToken = false;
-    fetch(url, options)
-      .then(res => {
-        if (!cancelToken) {
-          return res.json()
-            .then(data => {
-              fetchObserver.next(data);
-              fetchObserver.complete();
-            });
-        }
-      }).catch(err => fetchObserver.error(err));
-    return () => {
-      cancelToken = true;
-    };
-  });
-}
-

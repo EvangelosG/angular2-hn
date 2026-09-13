@@ -1,17 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-error-message',
   templateUrl: './error-message.component.html',
-  styleUrls: ['./error-message.component.scss'],
-  standalone: false
+  styleUrl: './error-message.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ErrorMessageComponent implements OnInit {
-  @Input() message: string;
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class ErrorMessageComponent {
+  readonly message = input<string>('');
 }
