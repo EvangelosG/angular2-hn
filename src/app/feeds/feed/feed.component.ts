@@ -3,13 +3,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { HackerNewsAPIService } from '../../shared/services/hackernews-api.service';
-import { SharedComponentsModule } from '../../shared/components/shared-components.module';
+import { LoaderComponent } from '../../shared/components/loader/loader.component';
+import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { Story } from '../../shared/models/story';
 import { ItemComponent } from '../item/item.component';
 
 @Component({
   selector: 'app-feed',
-  imports: [RouterLink, RouterLinkActive, SharedComponentsModule, ItemComponent],
+  imports: [RouterLink, RouterLinkActive, LoaderComponent, ErrorMessageComponent, ItemComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.scss']
 })

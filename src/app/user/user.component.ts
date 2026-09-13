@@ -4,12 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { HackerNewsAPIService } from '../shared/services/hackernews-api.service';
-import { SharedComponentsModule } from '../shared/components/shared-components.module';
+import { LoaderComponent } from '../shared/components/loader/loader.component';
+import { ErrorMessageComponent } from '../shared/components/error-message/error-message.component';
 import { User } from '../shared/models/user';
 
 @Component({
   selector: 'app-user',
-  imports: [SharedComponentsModule],
+  imports: [LoaderComponent, ErrorMessageComponent],
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })

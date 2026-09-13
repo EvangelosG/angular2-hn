@@ -4,11 +4,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Story } from '../../shared/models/story';
 import { SettingsService } from '../../shared/services/settings.service';
 import { Settings } from '../../shared/models/settings';
-import { PipesModule } from '../../shared/pipes/pipes.module';
+import { CommentPipe } from '../../shared/pipes/comment.pipe';
 
 @Component({
   selector: 'app-item',
-  imports: [RouterLink, RouterLinkActive, PipesModule],
+  imports: [RouterLink, RouterLinkActive, CommentPipe],
   templateUrl: './item.component.html',
   styleUrls: ['./item.component.scss']
 })

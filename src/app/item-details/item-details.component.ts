@@ -5,8 +5,9 @@ import { Location } from '@angular/common';
 
 import { HackerNewsAPIService } from '../shared/services/hackernews-api.service';
 import { SettingsService } from '../shared/services/settings.service';
-import { SharedComponentsModule } from '../shared/components/shared-components.module';
-import { PipesModule } from '../shared/pipes/pipes.module';
+import { LoaderComponent } from '../shared/components/loader/loader.component';
+import { ErrorMessageComponent } from '../shared/components/error-message/error-message.component';
+import { CommentPipe } from '../shared/pipes/comment.pipe';
 import { CommentComponent } from './comment/comment.component';
 
 import { Story } from '../shared/models/story';
@@ -14,7 +15,7 @@ import { Settings } from '../shared/models/settings';
 
 @Component({
   selector: 'app-item-details',
-  imports: [RouterLink, RouterLinkActive, SharedComponentsModule, PipesModule, CommentComponent],
+  imports: [RouterLink, RouterLinkActive, LoaderComponent, ErrorMessageComponent, CommentPipe, CommentComponent],
   templateUrl: './item-details.component.html',
   styleUrls: ['./item-details.component.scss']
 })
