@@ -2,7 +2,8 @@
     <div class="popup">
         <h1>Settings</h1>
         <hr>
-        <span class="close" (click)="closeSettings()">&times;</span>
+        <span class="close" role="button" tabindex="0" aria-label="Close settings"
+              (click)="closeSettings()" (keydown.enter)="closeSettings()">&times;</span>
         <div class="content">
             <div class="control-section">
                 <h2>Links</h2>
@@ -59,7 +60,7 @@
                             #titleFont 
                             min="1" 
                             [value]="settings.titleFontSize" 
-                            name="theme" 
+                            name="titleFontSize" 
                             type="number" 
                             (keyup)="changeTitleFont(titleFont.value)" />
                         </label>
@@ -71,7 +72,7 @@
                             #listSpacing 
                             min="0" 
                             [value]="settings.listSpacing" 
-                            name="theme" 
+                            name="listSpacing" 
                             type="number" 
                             (keyup)="changeSpacing(listSpacing.value)" />
                         </label>
