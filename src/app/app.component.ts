@@ -1,31 +1,37 @@
-import { Component } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 
+import { HeaderComponent } from './core/header/header.component';
+import { FooterComponent } from './core/footer/footer.component';
 import { SettingsService } from './shared/services/settings.service';
-import { Settings } from './shared/models/settings';
 
-declare let ga: Function;
+declare let ga: ((...args: unknown[]) => void) | undefined;
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrl: './app.component.scss',
+  imports: [RouterOutlet, HeaderComponent, FooterComponent]
 })
-
 export class AppComponent {
-  settings: Settings;
-  theme: string;
+  private readonly settingsService = inject(SettingsService);
+  private readonly router = inject(Router);
 
-  constructor(
-    private _settingsService: SettingsService,
-    public router: Router
-  ) {
-    this.settings = this._settingsService.settings;
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        ga('set', 'page', event.urlAfterRedirects);
-        ga('send', 'pageview');
-      }
-    });
+  readonly theme = this.settingsService.theme;
+
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed()
+      )
+      .subscribe(event => {
+        if (typeof ga === 'function') {
+          ga('set', 'page', event.urlAfterRedirects);
+          ga('send', 'pageview');
+        }
+      });
   }
 }

@@ -1,40 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { SettingsService } from '../../shared/services/settings.service';
-import { Settings } from '../../shared/models/settings';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  styleUrl: './settings.component.scss'
 })
-export class SettingsComponent implements OnInit {
-  settings: Settings;
+export class SettingsComponent {
+  private readonly settingsService = inject(SettingsService);
 
-  constructor(private _settingsService: SettingsService) {
-    this.settings = this._settingsService.settings;
-  }
-
-  ngOnInit() {
-  }
+  readonly openLinkInNewTab = this.settingsService.openLinkInNewTab.asReadonly();
+  readonly theme = this.settingsService.theme.asReadonly();
+  readonly titleFontSize = this.settingsService.titleFontSize.asReadonly();
+  readonly listSpacing = this.settingsService.listSpacing.asReadonly();
 
   closeSettings() {
-    this._settingsService.toggleSettings();
+    this.settingsService.toggleSettings();
   }
 
   toggleOpenLinksInNewTab() {
-    this._settingsService.toggleOpenLinksInNewTab();
+    this.settingsService.toggleOpenLinksInNewTab();
   }
 
-  selectTheme(theme) {
-    this._settingsService.setTheme(theme);
+  selectTheme(theme: string) {
+    this.settingsService.setTheme(theme);
   }
 
-  changeTitleFont(val){
-    this._settingsService.setFont(val);
+  changeTitleFont(val: string) {
+    this.settingsService.setFont(val);
   }
 
-  changeSpacing(val){
-    this._settingsService.setSpacing(val);
+  changeSpacing(val: string) {
+    this.settingsService.setSpacing(val);
   }
 }

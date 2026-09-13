@@ -1,26 +1,24 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Story } from '../../shared/models/story';
+import { Component, computed, inject, input } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { Story } from '../../shared/models/story';
 import { SettingsService } from '../../shared/services/settings.service';
-import { Settings } from '../../shared/models/settings';
+import { CommentPipe } from '../../shared/pipes/comment.pipe';
 
 @Component({
-  selector: 'item',
+  selector: 'app-feed-item',
   templateUrl: './item.component.html',
-  styleUrls: ['./item.component.scss']
+  styleUrl: './item.component.scss',
+  imports: [RouterLink, RouterLinkActive, CommentPipe]
 })
-export class ItemComponent implements OnInit {
-  @Input() item: Story;
-  settings: Settings;
+export class ItemComponent {
+  private readonly settingsService = inject(SettingsService);
 
-  constructor(private _settingsService: SettingsService) {
-    this.settings = this._settingsService.settings;
-  }
+  readonly item = input.required<Story>();
+  readonly openLinkInNewTab = this.settingsService.openLinkInNewTab.asReadonly();
+  readonly titleFontSize = this.settingsService.titleFontSize.asReadonly();
+  readonly listSpacing = this.settingsService.listSpacing.asReadonly();
 
-  ngOnInit() {}
-
-  get hasUrl(): boolean {
-    return this.item.url.indexOf('http') === 0;
-  }
-
+  readonly hasUrl = computed(() => this.item().url?.startsWith('http') ?? false);
+  readonly isJob = computed(() => this.item().type === 'job');
 }
