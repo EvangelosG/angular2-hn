@@ -1,35 +1,47 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, map, of, switchMap } from 'rxjs';
 
 import { HackerNewsAPIService } from '../shared/services/hackernews-api.service';
+import { SharedComponentsModule } from '../shared/components/shared-components.module';
 import { User } from '../shared/models/user';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.scss'],
-  standalone: false
+  styleUrl: './user.component.scss',
+  imports: [SharedComponentsModule]
 })
 export class UserComponent implements OnInit {
-  sub: Subscription;
-  user: User;
-  errorMessage = '';
+  private _hackerNewsAPIService = inject(HackerNewsAPIService);
+  private route = inject(ActivatedRoute);
+  private _location = inject(Location);
+  private destroyRef = inject(DestroyRef);
 
-  constructor(
-    private _hackerNewsAPIService: HackerNewsAPIService,
-    private route: ActivatedRoute,
-    private _location: Location
-  ) {}
+  user = signal<User | null>(null);
+  errorMessage = signal('');
 
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      let userID = params['id'];
-      this._hackerNewsAPIService.fetchUser(userID).subscribe(data => {
-        this.user = data;
-      }, error => this.errorMessage = 'Could not load user ' + userID + '.');
-    });
+    this.route.paramMap
+      .pipe(
+        map(params => params.get('id') ?? ''),
+        switchMap(userID =>
+          this._hackerNewsAPIService.fetchUser(userID).pipe(
+            map(user => ({ userID, user })),
+            catchError(() => of({ userID, user: null as User | null }))
+          )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(({ userID, user }) => {
+        if (user) {
+          this.user.set(user);
+        } else {
+          this.errorMessage.set('Could not load user ' + userID + '.');
+        }
+      });
   }
 
   goBack() {
