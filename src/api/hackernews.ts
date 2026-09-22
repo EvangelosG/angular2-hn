@@ -3,6 +3,7 @@ import { Story } from '../models/story';
 import { User } from '../models/user';
 
 export const BASE_URL = 'https://node-hnapi.herokuapp.com';
+export const USER_FALLBACK_URL = 'https://api.hnpwa.com/v0';
 
 async function getJson<T>(url: string, signal?: AbortSignal): Promise<T> {
     const response = await fetch(url, { signal });
@@ -34,6 +35,13 @@ export async function fetchItemContent(id: number, signal?: AbortSignal): Promis
     return story;
 }
 
-export function fetchUser(id: string, signal?: AbortSignal): Promise<User> {
-    return getJson<User>(`${BASE_URL}/user/${id}`, signal);
+export async function fetchUser(id: string, signal?: AbortSignal): Promise<User> {
+    try {
+        return await getJson<User>(`${BASE_URL}/user/${id}`, signal);
+    } catch (error) {
+        if (signal?.aborted) {
+            throw error;
+        }
+        return getJson<User>(`${USER_FALLBACK_URL}/user/${encodeURIComponent(id)}.json`, signal);
+    }
 }

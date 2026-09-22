@@ -1,14 +1,6 @@
 @import "./media";
 @import "./theme_variables";
 
-/* ----------------------------------
-
-  Ported from the Angular app: `src/styles.scss` (document level) and the
-  layout part of `src/app/app.component.scss` (`.body-cover` / `.wrapper`),
-  which was never view-encapsulation dependent.
-
----------------------------------- */
-
 html {
   height: 100%;
   width: 100%;

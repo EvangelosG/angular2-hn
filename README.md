@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A progressive Hacker News client built with Angular
+  A progressive Hacker News client built with React + TypeScript (migrated from Angular)
 </p>
 
 <p align="center">
@@ -43,7 +43,7 @@
 
 ## Offline Support
 
-This app uses [Workbox](https://workboxjs.org/) to generate a service worker as part of the build step to load quickly and work offline.
+This app uses [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox `generateSW`) to generate a service worker as part of the build step to load quickly and work offline. The app shell (HTML, JS, CSS, icons, manifest) is precached and Hacker News API responses are served network-first with a one hour cache fallback.
 
 ## Manifest
 
@@ -71,18 +71,88 @@ More to come!
 
 Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [file an issue](https://github.com/hdjirdeh/angular2-hn/issues/new)! Feature requests are always welcome.
 
-## Build process
+## Tech stack
 
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
+- [React 18](https://react.dev/) + [TypeScript 5](https://www.typescriptlang.org/)
+- [React Router 6](https://reactrouter.com/) (lazy-loaded item and user routes)
+- [Vite 5](https://vitejs.dev/) with [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) for the service worker and web app manifest
+- [Sass](https://sass-lang.com/) for the theme engine
+- [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/) for unit tests
+- Data comes from the [node-hnapi](https://github.com/cheeaun/node-hnapi) REST API (user profiles fall back to [api.hnpwa.com](https://api.hnpwa.com/))
 
- - Clone or download the repo
- - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
+## Project structure
 
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+```
+index.html            Vite entry (mounts #root, loads src/main.tsx)
+vite.config.ts        Vite, Vitest and PWA (manifest + Workbox) configuration
+tsconfig.json         TypeScript config for the app (npm run typecheck)
+tsconfig.node.json    TypeScript config for vite.config.ts
+public/               Static assets served at the web root (icons, images, favicon)
+src/
+  main.tsx            ReactDOM bootstrap, router, settings provider, service worker registration
+  App.tsx             Route table
+  api/                Hacker News API client
+  models/             TypeScript models for stories, comments, polls, users, settings
+  context/            SettingsContext (theme, font size, list spacing, link target; persisted to localStorage)
+  components/         Layout (header, footer, settings panel), feed items, comments, shared loader/error
+  pages/              FeedPage, ItemDetailsPage, UserPage
+  hooks/              usePageTracking (Google Analytics page views)
+  pwa/                Service worker registration
+  styles/             Global styles and the Default / Night / Black (AMOLED) themes
+  test/               Vitest setup and render helpers
+```
+
+## Setup
+
+Requires Node.js 22 (or any current LTS) and npm.
+
+```bash
+npm install
+```
+
+## Development
+
+```bash
+npm run dev
+```
+
+Starts the Vite dev server at http://localhost:5173 with hot module replacement. The service worker is **not** registered in development; use the production preview below to test PWA behaviour.
+
+Other useful scripts:
+
+| Script | Description |
+| --- | --- |
+| `npm run typecheck` | Type-check the app with `tsc --noEmit` |
+| `npm test` | Run the Vitest unit tests once |
+| `npm run test:watch` | Run Vitest in watch mode |
+
+## Build
+
+```bash
+npm run build
+```
+
+Produces an optimised production bundle in `dist/react-hnpwa/`, including `sw.js`, the Workbox runtime and `manifest.webmanifest`.
+
+To test the production build (and the service worker) locally:
+
+```bash
+npm run preview
+```
+
+then open http://localhost:4173. On the first load the service worker installs and precaches the app shell; from the second load onwards the app works offline.
+
+## Deploy
+
+The app is hosted on Firebase Hosting. `firebase.json` points hosting at `dist/react-hnpwa`, rewrites every route to `index.html` and sets cache headers for the service worker, manifest and hashed assets.
+
+```bash
+npm install -g firebase-tools
+npm run build
+firebase login
+firebase use default      # or `firebase use experiment`
+firebase deploy --only hosting
+```
 
 ## Contributors
 

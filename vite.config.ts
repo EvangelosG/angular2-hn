@@ -9,7 +9,7 @@ export default defineConfig({
             registerType: 'prompt',
             injectRegister: null,
             manifestFilename: 'manifest.webmanifest',
-            includeAssets: ['favicon.ico', 'assets/**/*'],
+            includeManifestIcons: false,
             manifest: {
                 name: 'Angular 2 HN',
                 short_name: 'Angular 2 HN',
@@ -36,7 +36,7 @@ export default defineConfig({
                 clientsClaim: false,
                 runtimeCaching: [
                     {
-                        urlPattern: /^https:\/\/node-hnapi\.herokuapp\.com\/.*$/,
+                        urlPattern: /^https:\/\/(node-hnapi\.herokuapp\.com|api\.hnpwa\.com)\/.*$/,
                         handler: 'NetworkFirst',
                         options: {
                             cacheName: 'hn-api',
@@ -55,6 +55,14 @@ export default defineConfig({
     build: {
         outDir: 'dist/react-hnpwa',
         emptyOutDir: true,
+    },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler',
+                silenceDeprecations: ['import', 'global-builtin', 'color-functions'],
+            },
+        },
     },
     server: {
         port: 5173,
