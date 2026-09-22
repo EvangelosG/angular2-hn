@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
 import { SettingsProvider } from './context/SettingsContext';
+import { registerServiceWorker } from './pwa/registerServiceWorker';
 import './styles/index.scss';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
@@ -15,3 +16,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         </BrowserRouter>
     </React.StrictMode>
 );
+
+registerServiceWorker();
