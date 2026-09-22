@@ -5,11 +5,13 @@
  * The theme class (`default` | `night` | `amoledblack`) is applied to the
  * outermost element, exactly like the Angular `AppComponent` template did.
  */
+import { useSettings } from './context/SettingsContext';
+
 export default function App() {
-    const theme = 'default';
+    const { settings } = useSettings();
 
     return (
-        <div className={theme}>
+        <div className={settings.theme}>
             <div className="body-cover" />
             <div className="wrapper">
                 <h1>Hacker News</h1>
