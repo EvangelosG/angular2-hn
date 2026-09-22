@@ -4,10 +4,10 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchFeed } from '../api/hackernews';
 import Item from '../components/Item';
 import { ErrorMessage, Loader } from '../components/shared';
-import type { Story } from '../models/story';
+import type { FeedName, Story } from '../models';
 import './feed-page.scss';
 
-export type FeedName = 'news' | 'newest' | 'show' | 'ask' | 'jobs';
+export type { FeedName };
 
 export const FEED_TITLES: Record<FeedName, string> = {
   news: 'Top',
@@ -57,7 +57,7 @@ export default function FeedPage({ feedType: feedTypeProp }: FeedPageProps) {
   const listStart = (pageNum - 1) * 30 + 1;
 
   return (
-    <div className="main-content">
+    <div className="main-content feed">
       {!items && !errorMessage && <Loader />}
       {!items && errorMessage !== '' && <ErrorMessage message={errorMessage} />}
 

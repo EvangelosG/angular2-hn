@@ -1,21 +1,50 @@
-/**
- * Placeholder application shell. Later migration stages replace the inner
- * markup with the header, router outlet and footer.
- *
- * The theme class (`default` | `night` | `amoledblack`) is applied to the
- * outermost element, exactly like the Angular `AppComponent` template did.
- */
-import { useSettings } from './context/SettingsContext';
+import { lazy, Suspense } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+
+import { Layout } from './components/layout';
+import { Loader } from './components/shared';
+import { usePageTracking } from './hooks/usePageTracking';
+import type { FeedName } from './models';
+import FeedPage from './pages/FeedPage';
+
+const ItemDetailsPage = lazy(() => import('./pages/ItemDetailsPage'));
+const UserPage = lazy(() => import('./pages/UserPage'));
+
+export const FEED_NAMES: readonly FeedName[] = ['news', 'newest', 'show', 'ask', 'jobs'];
+
+export const HOME_PATH = '/news/1';
 
 export default function App() {
-    const { settings } = useSettings();
+    usePageTracking();
 
     return (
-        <div className={settings.theme}>
-            <div className="body-cover" />
-            <div className="wrapper">
-                <h1>Hacker News</h1>
-            </div>
-        </div>
+        <Routes>
+            <Route element={<Layout />}>
+                <Route index element={<Navigate to={HOME_PATH} replace />} />
+                {FEED_NAMES.map((feed) => (
+                    <Route key={feed} path={feed}>
+                        <Route index element={<Navigate to={`/${feed}/1`} replace />} />
+                        <Route path=":page" element={<FeedPage feedType={feed} />} />
+                    </Route>
+                ))}
+                <Route
+                    path="item/:id"
+                    element={
+                        <Suspense fallback={<Loader />}>
+                            <ItemDetailsPage />
+                        </Suspense>
+                    }
+                />
+                <Route
+                    path="user/:id"
+                    element={
+                        <Suspense fallback={<Loader />}>
+                            <UserPage />
+                        </Suspense>
+                    }
+                />
+                <Route path="*" element={<Navigate to={HOME_PATH} replace />} />
+            </Route>
+        </Routes>
     );
 }

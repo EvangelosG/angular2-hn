@@ -38,7 +38,7 @@ export default function UserPage() {
             return;
         }
         const previousTitle = document.title;
-        document.title = `Profile: ${user.id} | Angular HNPWA`;
+        document.title = `Profile: ${user.id} | Angular 2 HN`;
         return () => {
             document.title = previousTitle;
         };

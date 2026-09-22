@@ -10,14 +10,11 @@ import { formatCommentCount, renderCommentHtml } from '../utils/comment';
 
 import './item-details.scss';
 
-/** The HN API returns the story body as `content`, which is not part of the shared Story model. */
-type StoryWithContent = Story & { content?: string };
-
 export default function ItemDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { settings } = useSettings();
-    const [item, setItem] = useState<StoryWithContent | null>(null);
+    const [item, setItem] = useState<Story | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
@@ -51,7 +48,7 @@ export default function ItemDetailsPage() {
 
     if (!item) {
         return (
-            <div className="main-content">
+            <div className="main-content item-page">
                 {errorMessage === '' ? <Loader /> : <ErrorMessage message={errorMessage} />}
             </div>
         );
@@ -70,7 +67,7 @@ export default function ItemDetailsPage() {
     }
 
     return (
-        <div className="main-content">
+        <div className="main-content item-page">
             <div className="item">
                 <div className="mobile item-header">
                     <p className="title-block">

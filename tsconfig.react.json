@@ -27,7 +27,8 @@
         "src/context",
         "src/pages",
         "src/hooks",
-        "src/utils"
+        "src/utils",
+        "src/test"
     ],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
