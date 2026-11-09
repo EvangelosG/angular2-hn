@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A progressive Hacker News client built with Angular
+  A progressive Hacker News client built with React, TypeScript and Vite (originally Angular)
 </p>
 
 <p align="center">
@@ -43,7 +43,7 @@
 
 ## Offline Support
 
-This app uses [Workbox](https://workboxjs.org/) to generate a service worker as part of the build step to load quickly and work offline.
+This app uses [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox) to generate a service worker as part of the build step. The app shell is precached, static assets are cached on first use, and Hacker News API responses are cached network-first so pages you have visited work offline.
 
 ## Manifest
 
@@ -73,16 +73,17 @@ Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [fil
 
 ## Build process
 
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
+Requires Node.js 20+.
 
  - Clone or download the repo
  - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
+ - `npm run dev` to start the Vite dev server, or `npm run build` to type-check and build to `dist/`
+ - `npm run preview` to serve the production build locally (the service worker is only registered in the production build)
+ - `npm test` to run the unit tests (Vitest + React Testing Library)
+ - `npm run e2e` to run the Playwright end-to-end tests against the production build (first run `npx playwright install chromium`)
+ - `npm run lint` and `npm run typecheck` for ESLint and TypeScript checks
 
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+`firebase deploy` publishes `dist/`.
 
 ## Contributors
 
