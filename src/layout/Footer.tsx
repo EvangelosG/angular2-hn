@@ -1,8 +1,15 @@
-// STUB (owned by the layout agent): port of core/footer.
+import styles from './Footer.module.scss';
+
+/** Port of Angular's core/footer component. */
 export function Footer() {
     return (
-        <footer>
-            <div id="footer">Footer</div>
-        </footer>
+        <div id="footer" className={styles.footer}>
+            <p>
+                Show this project some ❤ on{' '}
+                <a href="https://github.com/hdjirdeh/angular2-hn" target="_blank" rel="noopener">
+                    GitHub
+                </a>
+            </p>
+        </div>
     );
 }
