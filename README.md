@@ -5,84 +5,60 @@
 </p>
 
 <p align="center">
-  A progressive Hacker News client built with Angular
-</p>
-
-<p align="center">
-  <a href="https://angular2-hn.firebaseapp.com">View App</a>
-</p>
-
-<p align="center">
-  <a href="/CONTRIBUTING.md"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
-  <a href="https://travis-ci.org/housseindjirdeh/angular2-hn"><img alt="Build Status" src="https://travis-ci.org/housseindjirdeh/angular2-hn.svg?branch=master"></a>
+  A Hacker News client, migrated from Angular 9 to React
 </p>
 
 ---
 
-:zap: **Fast:** Service Worker App Shell + Dynamic Content model to achieve faster load times with and without a network.
+The app was originally built with Angular. It now runs on **Vite + React 18 + TypeScript (strict) + React Router v6 + Sass**,
+with the same pages, look and themes. Data comes from [node-hnapi](https://node-hnapi.herokuapp.com).
 
-:iphone: **Responsive:** Completely responsive UI that can be installed to your mobile home screen to provide a native feel.
+Offline support (service worker) was dropped in the migration; the web app manifest and icons are still served as static assets.
 
-:rocket: **Progressive:** [Lighthouse](https://github.com/GoogleChrome/lighthouse) score of 87/100.
+## Scripts
 
-<p align="center">
-  <img src = "http://i.imgur.com/fzJzLFO.png" width=500>
-</p>
+Requires Node 22 (`nvm use 22`).
 
-## Mobile Preview
+| Command | What it does |
+| --- | --- |
+| `npm install` | Install dependencies |
+| `npm run dev` | Start the Vite dev server (http://localhost:5173) |
+| `npm run build` | Type-check (`tsc -b`) and build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm test` | Run the unit tests once (Vitest + React Testing Library + jsdom) |
+| `npm run lint` | Lint with ESLint (typescript-eslint + react-hooks) |
+| `npm run typecheck` | Type-check without emitting |
 
-<p align="center">
-  <img src = "http://i.imgur.com/ZloA1hn.gif">
-</p>
+## Project structure
 
-## Laptop Preview
+```
+index.html            Vite entry HTML (meta tags, app loader, Google Analytics)
+public/               Static assets served as-is (assets/icons, assets/images, favicon.ico, manifest.json)
+src/
+  main.tsx            Bootstraps React with BrowserRouter + SettingsProvider
+  App.tsx             Theme wrapper (default | night | amoledblack), Header, routes, Footer
+  AppRoutes.tsx       Routes: / -> /news/1, /:feed/:page, /item/:id, /user/:id (item/user lazy-loaded)
+  api/                hackerNewsApi.ts: fetchFeed, fetchItemContent, fetchPollContent, fetchUser
+  models/             Story, Comment, User, PollResult, Settings, FeedType, ItemType
+  settings/           SettingsProvider + useSettings (persisted to localStorage)
+  components/         Shared Loader and ErrorMessage
+  features/           feed, item, user pages
+  layout/             Header, Footer, Settings panel
+  styles/             Global styles and the theme engine (_themes.scss, _theme_variables.scss, _media.scss)
+  utils/              commentCount, cx
+  test/               Vitest setup and test helpers
+```
 
-<p align="center">
-  <img src = "http://i.imgur.com/MrKHaln.gif">
-</p>
-
-## Offline Support
-
-This app uses [Workbox](https://workboxjs.org/) to generate a service worker as part of the build step to load quickly and work offline.
-
-## Manifest
-
-With Chromium based browsers for Android (Chrome, Opera, etc...), Angular 2 HN includes a Web App Manifest that allows you to install to your homescreen.
-
-<p align="center">
-  <img src = "http://i.imgur.com/1RaaNkr.png">
-</p>
+Component styles are CSS Modules (`*.module.scss`) so they stay scoped like Angular's component styles. Only `src/styles/` is global.
 
 ## Themes
 
-Built in theme engine!
+Built-in theme engine with Default, Night and Black (AMOLED). Without a saved choice, the theme follows the system
+`prefers-color-scheme` setting.
 
-Current themes:
-* Default
-* Night
-* Black (AMOLED)
+## Deployment
 
-More to come!
-
-## Areas of improvement
-
- - Realtime updating using the Firebase SDK (may need to add option to settings so service worker can still rely on REST endpoints)
- - Server side rendering
-
-Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [file an issue](https://github.com/hdjirdeh/angular2-hn/issues/new)! Feature requests are always welcome.
-
-## Build process
-
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
-
- - Clone or download the repo
- - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
-
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+`firebase.json` serves `dist/` (the Vite build output) with an SPA rewrite to `index.html`.
 
 ## Contributors
 
