@@ -26,6 +26,8 @@ describe('Comment', () => {
         expect(screen.getByText('2 hours ago')).toBeInTheDocument();
         expect(container.querySelector('b')).toHaveTextContent('comment');
         expect(container.querySelector('.meta')).not.toBeNull();
+        // Like Angular (preserveWhitespaces: false), no space between the toggle and the author.
+        expect(container.querySelector('.meta')?.textContent).toBe('[-]alice2 hours ago');
     });
 
     it('renders nested replies recursively', () => {

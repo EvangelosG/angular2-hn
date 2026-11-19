@@ -41,7 +41,7 @@ export function Comment({ comment }: CommentProps) {
                     }}
                 >
                     [{collapse ? '+' : '-'}]
-                </span>{' '}
+                </span>
                 <NavLink to={`/user/${comment.user}`}>{comment.user}</NavLink>
                 <span className={styles.time}>{comment.time_ago}</span>
             </div>
