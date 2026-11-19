@@ -1,0 +1,19 @@
+// Global styles. Imported once from main.tsx, before App, so CSS Modules win specificity ties.
+// The pre-bootstrap .app-loader styles are inlined in index.html.
+@use "./themes";
+@use "./app";
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+pre {
+    white-space: pre-wrap;
+}

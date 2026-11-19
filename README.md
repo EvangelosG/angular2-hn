@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A progressive Hacker News client built with Angular
+  A progressive Hacker News client built with React, TypeScript and Vite
 </p>
 
 <p align="center">
@@ -43,7 +43,7 @@
 
 ## Offline Support
 
-This app uses [Workbox](https://workboxjs.org/) to generate a service worker as part of the build step to load quickly and work offline.
+This app uses [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox `generateSW`) to generate a service worker at build time. It precaches the app shell and static assets and falls back to `index.html` for client-side routes, so the app loads quickly and works offline.
 
 ## Manifest
 
@@ -73,16 +73,27 @@ Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [fil
 
 ## Build process
 
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
+The app is built with Vite, React 18, TypeScript (strict), React Router v6, Sass CSS Modules and vite-plugin-pwa. Tests use Vitest and React Testing Library; linting uses ESLint (flat config). Use Node 22.
 
  - Clone or download the repo
- - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
+ - `npm ci` to install dependencies from the lockfile
+ - `npm run dev` to start the dev server at http://localhost:5173
+ - `npm run build` to type-check and build into `dist/` (served by Firebase hosting)
+ - `npm run preview` to serve the production build, including the service worker
+ - `npm test` to run the unit tests once (Vitest)
+ - `npm run lint` to lint with ESLint
+ - `npm run typecheck` to type-check with `tsc -b`
 
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+Note: The service worker only runs in production builds, so use `npm run build && npm run preview` to test offline support.
+
+### Project layout
+
+ - `src/main.tsx`, `src/App.tsx`, `src/routes.tsx`: entry point, theme wrapper and route table
+ - `src/layout/`: header, settings popup and footer
+ - `src/features/feed`, `src/features/item`, `src/features/user`: route pages (item and user are lazy-loaded)
+ - `src/api/`, `src/models/`, `src/settings/`: Hacker News API client, types and persisted user settings
+ - `src/components/`, `src/utils/`, `src/styles/`, `src/analytics/`: shared UI, helpers, global themes and Google Analytics page views
+ - `public/`: manifest, favicon and static assets
 
 ## Contributors
 
