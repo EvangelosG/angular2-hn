@@ -1,4 +1,14 @@
-// Placeholder: replaced by the layout agent (port of core/footer).
+import styles from './Footer.module.scss';
+
 export function Footer() {
-    return <div id="footer">Footer placeholder</div>;
+    return (
+        <div id="footer" className={styles.footer}>
+            <p>
+                Show this project some ❤ on{' '}
+                <a href="https://github.com/hdjirdeh/angular2-hn" target="_blank" rel="noopener">
+                    GitHub
+                </a>
+            </p>
+        </div>
+    );
 }
