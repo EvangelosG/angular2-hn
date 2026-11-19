@@ -73,16 +73,16 @@ Feel free to send me feedback on [twitter](https://twitter.com/hdjirdeh) or [fil
 
 ## Build process
 
-Note: This project has been ejected (with AOT + production settings) in order to customize Webpack configurations.
+The app is built with Vite, React 18, TypeScript, React Router and vite-plugin-pwa (Node 22).
 
  - Clone or download the repo
- - `npm install`
- - `npm start` to run the application with webpack-dev-server or `npm build` to kick off a fresh build and update the output directory (`dist/`)
+ - `npm install --legacy-peer-deps`
+ - `npm run dev` to start the dev server
+ - `npm run build` to type-check and build into `dist/` (served by Firebase hosting)
+ - `npm run preview` to serve the production build, including the service worker
+ - `npm test`, `npm run lint` and `npm run typecheck` to check the code
 
-Note: Any Service Worker changes will not be reflected when you run the application locally in development. To test service worker changes:
- - `npm build`
- - `npm run precache` to generate the service worker file
- - `npm run static-serve` to load the application along with the service worker asset using [live-server](https://github.com/tapio/live-server)
+Note: The service worker only runs in production builds, so use `npm run build && npm run preview` to test offline support.
 
 ## Contributors
 
