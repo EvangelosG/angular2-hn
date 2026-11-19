@@ -44,3 +44,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Vite / PWA / Playwright
+/dev-dist
+/playwright-report
+/test-results
